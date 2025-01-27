@@ -4,6 +4,7 @@ using ClinicaMedica.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicaMedica.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250127025120_CitasMedicas")]
+    partial class CitasMedicas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,26 +46,7 @@ namespace ClinicaMedica.Migrations
 
                     b.HasKey("CitaMedicaId");
 
-                    b.HasIndex("MedicoId");
-
-                    b.HasIndex("PacienteId");
-
                     b.ToTable("CitasMedicas");
-                });
-
-            modelBuilder.Entity("ClinicaMedica.Entities.DetalleCitas", b =>
-                {
-                    b.Property<int>("CitaMedicaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServicioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CitaMedicaId", "ServicioId");
-
-                    b.HasIndex("ServicioId");
-
-                    b.ToTable("DetalleCitas");
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.Especialidades", b =>
@@ -268,44 +251,6 @@ namespace ClinicaMedica.Migrations
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("ClinicaMedica.Entities.CitasMedicas", b =>
-                {
-                    b.HasOne("ClinicaMedica.Entities.Medicos", "Medicos")
-                        .WithMany()
-                        .HasForeignKey("MedicoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ClinicaMedica.Entities.Pacientes", "Paciente")
-                        .WithMany()
-                        .HasForeignKey("PacienteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Medicos");
-
-                    b.Navigation("Paciente");
-                });
-
-            modelBuilder.Entity("ClinicaMedica.Entities.DetalleCitas", b =>
-                {
-                    b.HasOne("ClinicaMedica.Entities.CitasMedicas", "CitaMedica")
-                        .WithMany("DetalleCitas")
-                        .HasForeignKey("CitaMedicaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ClinicaMedica.Entities.Servicios", "Servicio")
-                        .WithMany("DetalleCitas")
-                        .HasForeignKey("ServicioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CitaMedica");
-
-                    b.Navigation("Servicio");
-                });
-
             modelBuilder.Entity("ClinicaMedica.Entities.Medicos", b =>
                 {
                     b.HasOne("ClinicaMedica.Entities.Especialidades", "Especialidades")
@@ -347,11 +292,6 @@ namespace ClinicaMedica.Migrations
                     b.Navigation("Pago");
                 });
 
-            modelBuilder.Entity("ClinicaMedica.Entities.CitasMedicas", b =>
-                {
-                    b.Navigation("DetalleCitas");
-                });
-
             modelBuilder.Entity("ClinicaMedica.Entities.Especialidades", b =>
                 {
                     b.Navigation("Medicos");
@@ -360,11 +300,6 @@ namespace ClinicaMedica.Migrations
             modelBuilder.Entity("ClinicaMedica.Entities.MediosPago", b =>
                 {
                     b.Navigation("Pagos");
-                });
-
-            modelBuilder.Entity("ClinicaMedica.Entities.Servicios", b =>
-                {
-                    b.Navigation("DetalleCitas");
                 });
 #pragma warning restore 612, 618
         }

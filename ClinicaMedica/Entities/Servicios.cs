@@ -15,5 +15,8 @@ namespace ClinicaMedica.Entities
         [Required]
         [Range(0, double.MaxValue, ErrorMessage = "El precio debe ser un valor positivo.")]
         public  float Precio { get; set; }
+
+        // Relación con DetalleCitas
+        public ICollection<DetalleCitas> DetalleCitas { get; set; }
     }
 }
