@@ -20,6 +20,8 @@ builder.Services.AddAutoMapper(configuration =>
     configuration.CreateMap<Personas, PersonasDTO>().ReverseMap();
     configuration.CreateMap<Medicos, MedicosCreacionDTO>().ReverseMap();
     configuration.CreateMap<Personas, PersonasCreacionDTO>().ReverseMap();
+    configuration.CreateMap<Pacientes, PacientesCreacionDTO>().ReverseMap();
+    configuration.CreateMap<Pacientes, PacientesDTO>().ReverseMap();
 });
 
 builder.Services.AddControllers().AddJsonOptions(options =>
