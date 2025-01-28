@@ -9,6 +9,7 @@ using ClinicaMedica.Data;
 using ClinicaMedica.Entities;
 using ClinicaMedica.DTOs.Create;
 using AutoMapper;
+using ClinicaMedica.DTOs.Basic;
 
 namespace ClinicaMedica.Controllers
 {
@@ -27,13 +28,18 @@ namespace ClinicaMedica.Controllers
 
         // GET: api/CitasMedicas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CitasMedicas>>> GetCitasMedicas()
+        public async Task<ActionResult<IEnumerable<CitasMedicasDTO>>> GetCitasMedicas()
         {
           if (_context.CitasMedicas == null)
           {
               return NotFound();
           }
-            return await _context.CitasMedicas.ToListAsync();
+            var citasMedicas = await _context.CitasMedicas.Include(c => c.Medicos)
+                  .Include(c => c.Paciente).Include(c => c.DetalleCitas).ToListAsync();
+            
+            var citasMedicasDTO = _mapper.Map<List<CitasMedicasDTO>>(citasMedicas);
+            
+            return citasMedicasDTO;
         }
 
         // GET: api/CitasMedicas/5

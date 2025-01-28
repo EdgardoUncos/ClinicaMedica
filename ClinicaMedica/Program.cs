@@ -24,7 +24,11 @@ builder.Services.AddAutoMapper(configuration =>
     configuration.CreateMap<Pacientes, PacientesDTO>().ReverseMap();
     configuration.CreateMap<CitasMedicas, CitasMedicasCreacionDTO>();
     configuration.CreateMap<Servicios, ServiciosCreacionDTO>().ReverseMap();
-    configuration.CreateMap<Servicios, ServiciosDTO>().ReverseMap();    
+    configuration.CreateMap<Servicios, ServiciosDTO>().ReverseMap();
+    configuration.CreateMap<CitasMedicas, CitasMedicasCreacionDTO>().ReverseMap();
+    configuration.CreateMap<CitasMedicas, CitasMedicasDTO>().ReverseMap();
+    configuration.CreateMap<DetalleCitas, DetalleCitasDTO>().ReverseMap();
+    configuration.CreateMap<DetalleCitas, DetalleCitasCreacionDTO>().ReverseMap();
 });
 
 builder.Services.AddControllers().AddJsonOptions(options =>
