@@ -1,4 +1,4 @@
-# Proyecto de Software Empresarial
+# Proyecto de Software para una Clinica Medica
 
 ![HackaCode](https://github.com/EdgardoUncos/ClinicaMedica/blob/main/ClinicaMedica/Images/HackaCode.png)
 
