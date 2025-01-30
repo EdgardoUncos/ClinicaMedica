@@ -104,9 +104,19 @@ namespace ClinicaMedica.Controllers
             var pacientes = _mapper.Map<Pacientes>(pacientesCreacionDTO);
             _context.Personas.Add(pacientes.Persona);
             _context.Pacientes.Add(pacientes);
-            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPacientes", new { id = pacientes.PacienteId }, pacientes);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("GetPacientes", new { id = pacientes.PacienteId }, pacientes);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+                
+            }
+
         }
 
         // DELETE: api/Pacientes/5

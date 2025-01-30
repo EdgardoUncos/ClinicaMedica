@@ -20,5 +20,7 @@ namespace ClinicaMedica.Entities
         public Personas Persona { get; set; }
         [ForeignKey(nameof(EspecialidadId))]
         public Especialidades Especialidades { get; set; }
+
+        public ICollection<Turnos> Turnos { get; set; }
     }
 }

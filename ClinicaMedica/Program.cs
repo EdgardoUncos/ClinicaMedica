@@ -7,6 +7,19 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configurar CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirBlazor",
+        builder =>
+        {
+            builder.WithOrigins("https://localhost:7047") // Cambia por el origen de tu aplicación Blazor
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
+
 // Add services to the container.
 string strCon = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -47,6 +60,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("PermitirBlazor");
 
 app.UseHttpsRedirection();
 

@@ -1,0 +1,58 @@
+﻿@page "/pacientes"
+@using ClinicaMedica.Model.DTOs.Basic
+@inject HttpClient Http
+
+<PageTitle>Pacientes</PageTitle>
+
+<h3>Lista de Pacientes</h3>
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <td>Nombre</td>
+                <td>Apellido</td>
+                <td>Obra Social</td>
+                <td>Acciones</td>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ListaPaciente != null)
+            {
+                @foreach (var paciente in ListaPaciente)
+                {
+                    <tr>
+                        <td>@paciente.Persona.Nombre</td>
+                        <td>@paciente.Persona.Apellido</td>
+                        <td>@paciente.ObraSocial</td>
+                        <td>
+                            <button class="btn btn-success"><i class="bi bi-pen-fill"></i></button>
+                            <button class="btn btn-danger"><i class="bi bi-trash3-fill"></i></button>
+                        </td>
+                    </tr>
+
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@code{
+
+    List<PacientesDTO> ListaPaciente = new List<PacientesDTO>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        var response = await Http.GetAsync($"https://localhost:7268/api/Pacientes");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var leoDes = await response.Content.ReadAsAsync<List<PacientesDTO>>();
+            ListaPaciente = leoDes;
+        }
+        else
+        {
+            Console.WriteLine(response.StatusCode);
+        }
+    }
+}

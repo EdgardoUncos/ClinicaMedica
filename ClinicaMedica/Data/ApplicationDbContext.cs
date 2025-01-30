@@ -19,6 +19,8 @@ namespace ClinicaMedica.Data
         public DbSet<Pagos> Pagos { get; set; }
         public DbSet<CitasMedicas> CitasMedicas { get; set; }
         public DbSet<DetalleCitas> DetalleCitas { get; set; }
+        public DbSet<Horarios> Horarios { get; set; }
+        public DbSet<Turnos> Turnos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

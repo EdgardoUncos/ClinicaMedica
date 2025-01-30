@@ -1,0 +1,47 @@
+﻿@model IEnumerable<ClinicaMedica.Model.DTOs.Basic.PacientesDTO>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Persona.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Persona.Apellido)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ObraSocial)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Persona.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Persona.Apellido)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ObraSocial)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id=item.PacienteId}) |
+                    @Html.ActionLink("Details", "Details", new { id = item.PacienteId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.PacienteId })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

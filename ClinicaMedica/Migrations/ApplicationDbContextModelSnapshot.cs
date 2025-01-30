@@ -48,7 +48,7 @@ namespace ClinicaMedica.Migrations
 
                     b.HasIndex("PacienteId");
 
-                    b.ToTable("CitasMedicas");
+                    b.ToTable("CitasMedicas", (string)null);
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.DetalleCitas", b =>
@@ -63,7 +63,7 @@ namespace ClinicaMedica.Migrations
 
                     b.HasIndex("ServicioId");
 
-                    b.ToTable("DetalleCitas");
+                    b.ToTable("DetalleCitas", (string)null);
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.Especialidades", b =>
@@ -81,7 +81,26 @@ namespace ClinicaMedica.Migrations
 
                     b.HasKey("EspecialidadId");
 
-                    b.ToTable("Especialidades");
+                    b.ToTable("Especialidades", (string)null);
+                });
+
+            modelBuilder.Entity("ClinicaMedica.Entities.Horarios", b =>
+                {
+                    b.Property<int>("HorarioId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HorarioId"), 1L, 1);
+
+                    b.Property<TimeSpan>("HorarioFin")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("HorarioInicio")
+                        .HasColumnType("time");
+
+                    b.HasKey("HorarioId");
+
+                    b.ToTable("Horarios", (string)null);
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.Medicos", b =>
@@ -107,7 +126,7 @@ namespace ClinicaMedica.Migrations
 
                     b.HasIndex("PersonaId");
 
-                    b.ToTable("Medicos");
+                    b.ToTable("Medicos", (string)null);
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.MediosPago", b =>
@@ -128,7 +147,7 @@ namespace ClinicaMedica.Migrations
 
                     b.HasKey("MedioPagoId");
 
-                    b.ToTable("MedioPagos");
+                    b.ToTable("MedioPagos", (string)null);
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.Pacientes", b =>
@@ -149,7 +168,7 @@ namespace ClinicaMedica.Migrations
 
                     b.HasIndex("PersonaId");
 
-                    b.ToTable("Pacientes");
+                    b.ToTable("Pacientes", (string)null);
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.Pagos", b =>
@@ -170,7 +189,7 @@ namespace ClinicaMedica.Migrations
 
                     b.HasIndex("MedioPagoId");
 
-                    b.ToTable("Pagos");
+                    b.ToTable("Pagos", (string)null);
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.Personas", b =>
@@ -205,7 +224,7 @@ namespace ClinicaMedica.Migrations
 
                     b.HasKey("PersonaId");
 
-                    b.ToTable("Personas");
+                    b.ToTable("Personas", (string)null);
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.Servicios", b =>
@@ -231,7 +250,36 @@ namespace ClinicaMedica.Migrations
 
                     b.HasKey("ServicioId");
 
-                    b.ToTable("Servicios");
+                    b.ToTable("Servicios", (string)null);
+                });
+
+            modelBuilder.Entity("ClinicaMedica.Entities.Turnos", b =>
+                {
+                    b.Property<int>("TurnoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TurnoId"), 1L, 1);
+
+                    b.Property<bool>("Asistencia")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("date");
+
+                    b.Property<int>("HorarioId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MedicoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TurnoId");
+
+                    b.HasIndex("HorarioId");
+
+                    b.HasIndex("MedicoId");
+
+                    b.ToTable("Turnos", (string)null);
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.Usuarios", b =>
@@ -265,7 +313,7 @@ namespace ClinicaMedica.Migrations
 
                     b.HasKey("UsuarioId");
 
-                    b.ToTable("Usuarios");
+                    b.ToTable("Usuarios", (string)null);
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.CitasMedicas", b =>
@@ -347,6 +395,25 @@ namespace ClinicaMedica.Migrations
                     b.Navigation("Pago");
                 });
 
+            modelBuilder.Entity("ClinicaMedica.Entities.Turnos", b =>
+                {
+                    b.HasOne("ClinicaMedica.Entities.Horarios", "Horario")
+                        .WithMany("Turnos")
+                        .HasForeignKey("HorarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClinicaMedica.Entities.Medicos", "Medico")
+                        .WithMany()
+                        .HasForeignKey("MedicoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Horario");
+
+                    b.Navigation("Medico");
+                });
+
             modelBuilder.Entity("ClinicaMedica.Entities.CitasMedicas", b =>
                 {
                     b.Navigation("DetalleCitas");
@@ -355,6 +422,11 @@ namespace ClinicaMedica.Migrations
             modelBuilder.Entity("ClinicaMedica.Entities.Especialidades", b =>
                 {
                     b.Navigation("Medicos");
+                });
+
+            modelBuilder.Entity("ClinicaMedica.Entities.Horarios", b =>
+                {
+                    b.Navigation("Turnos");
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.MediosPago", b =>
