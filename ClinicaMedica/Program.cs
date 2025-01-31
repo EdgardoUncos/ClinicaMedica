@@ -4,6 +4,8 @@ using ClinicaMedica.DTOs.Create;
 using ClinicaMedica.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +44,12 @@ builder.Services.AddAutoMapper(configuration =>
     configuration.CreateMap<CitasMedicas, CitasMedicasDTO>().ReverseMap();
     configuration.CreateMap<DetalleCitas, DetalleCitasDTO>().ReverseMap();
     configuration.CreateMap<DetalleCitas, DetalleCitasCreacionDTO>().ReverseMap();
+    configuration.CreateMap<Horarios, HorariosCreacionDTO>().ReverseMap();
+    configuration.CreateMap<Horarios, HorariosDTO>().ReverseMap();
+    configuration.CreateMap<Turnos, TurnosDTO>().ReverseMap();
+    configuration.CreateMap<Turnos, TurnosCreacionDTO>().ReverseMap();
+    configuration.CreateMap<Servicios, ServiciosDTO>().ReverseMap();
+    configuration.CreateMap<Servicios, ServiciosCreacionDTO>().ReverseMap();
 });
 
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -50,12 +58,20 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.MapType<TimeSpan>(() => new OpenApiSchema
+    {
+        Type = "string",
+        Format = "time-span",
+        Example = new OpenApiString("08:00:00")
+    });
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

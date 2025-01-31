@@ -10,6 +10,9 @@ namespace ClinicaMedica.Entities
 
         public int HorarioId { get; set; }
         public int MedicoId { get; set; }
+
+        public int PacienteId { get; set; }
+
         [Column(TypeName = "date")]
         public DateTime Fecha { get; set; }
         public bool Asistencia { get; set; }
@@ -20,5 +23,8 @@ namespace ClinicaMedica.Entities
 
         [ForeignKey(nameof(MedicoId))]
         public Medicos Medico { get; set; }
+
+        [ForeignKey(nameof(PacienteId))]
+        public Pacientes Paciente { get; set; }
     }
 }

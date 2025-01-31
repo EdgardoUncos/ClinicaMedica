@@ -13,5 +13,7 @@ namespace ClinicaMedica.Entities
 
         [ForeignKey(nameof(PersonaId))]
         public Personas Persona { get; set; }
+
+        public ICollection<Turnos> Turnos { get; set; }
     }
 }

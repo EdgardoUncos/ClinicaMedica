@@ -9,7 +9,7 @@ namespace ClinicaMedica.Model.DTOs.Basic
         public string Descripcion { get; set; }
         public float Precio { get; set; }
 
+        public ICollection<DetalleCitasDTO> DetalleCitas { get; set; }
 
-    
     }
 }

@@ -1,56 +1,48 @@
 ﻿using ClinicaMedica.Model.DTOs.Basic;
-using ClinicaMedica.Model.DTOs.Create;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Packaging.Signing;
 
 namespace ClinicaMedica.MVC.Controllers
 {
-    public class EspecialidadesController : Controller
+    public class HorariosController : Controller
     {
         private readonly HttpClient _httpClient;
 
-        public EspecialidadesController(IHttpClientFactory httpClient)
+        public HorariosController(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient.CreateClient("MyApiClient");
+            _httpClient = httpClientFactory.CreateClient("MyApiClient");
         }
-        // GET: EspecialidadesController
+        // GET: HorariosController
         public async Task<ActionResult> Index()
         {
-            var response = await _httpClient.GetAsync("api/Especialidades");
-            if( response.IsSuccessStatusCode)
-            {
-                var especialidades = await response.Content.ReadFromJsonAsync<List<EspecialidadesDTO>>();
-                return View(especialidades);
-            }
-            return View();
+
+            var response = await _httpClient.GetAsync("api/Horarios");
+            var horariosDTO = await response.Content.ReadFromJsonAsync<List<HorariosDTO>>();
+            return View(horariosDTO);
         }
 
-        // GET: EspecialidadesController/Details/5
+        // GET: HorariosController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var response = _httpClient.GetAsync($"api/Horarios/{id}").Result;
+            var horarioDTO = response.Content.ReadFromJsonAsync<HorariosDTO>().Result;
+            return View(horarioDTO);
         }
 
-        // GET: EspecialidadesController/Create
+        // GET: HorariosController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: EspecialidadesController/Create
+        // POST: HorariosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(EspecialidadesCreacionDTO especialidadesCreacionDTO)
+        public ActionResult Create(IFormCollection collection)
         {
             try
             {
-                var response = _httpClient.PostAsJsonAsync("api/Especialidades", especialidadesCreacionDTO);
-                if(response.Result.IsSuccessStatusCode)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                return View();
+                return RedirectToAction(nameof(Index));
             }
             catch
             {
@@ -58,13 +50,13 @@ namespace ClinicaMedica.MVC.Controllers
             }
         }
 
-        // GET: EspecialidadesController/Edit/5
+        // GET: HorariosController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: EspecialidadesController/Edit/5
+        // POST: HorariosController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -79,13 +71,13 @@ namespace ClinicaMedica.MVC.Controllers
             }
         }
 
-        // GET: EspecialidadesController/Delete/5
+        // GET: HorariosController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: EspecialidadesController/Delete/5
+        // POST: HorariosController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

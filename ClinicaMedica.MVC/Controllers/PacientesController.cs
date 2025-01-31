@@ -7,11 +7,15 @@ namespace ClinicaMedica.MVC.Controllers
 {
     public class PacientesController : Controller
     {
-        HttpClient client = new HttpClient();
+        HttpClient client;
+        public PacientesController(IHttpClientFactory httpClientFactory)
+        {
+            client = httpClientFactory.CreateClient("MyApiClient");
+        }
         // GET: PacientesController
         public async Task<ActionResult> Index()
         {
-            var response = await client.GetAsync("https://localhost:7268/api/Pacientes");
+            var response = await client.GetAsync("api/Pacientes");
             var pacientes = await response.Content.ReadFromJsonAsync<List<PacientesDTO>>();
             return View(pacientes);
         } 
@@ -19,7 +23,7 @@ namespace ClinicaMedica.MVC.Controllers
         // GET: PacientesController/Details/5
         public async Task<ActionResult> Details(int id)
         {
-            var response = await client.GetAsync($"https://localhost:7268/api/Pacientes/{id}");
+            var response = await client.GetAsync($"api/Pacientes/{id}");
             var paciente = await response.Content.ReadFromJsonAsync<PacientesDTO>();
             return View(paciente);
         }
@@ -37,7 +41,7 @@ namespace ClinicaMedica.MVC.Controllers
         {
             try
             {
-                var response = await client.PostAsJsonAsync("https://localhost:7268/api/Pacientes", collection);
+                var response = await client.PostAsJsonAsync("api/Pacientes", collection);
                 
                 if (response.IsSuccessStatusCode)
                 {
@@ -55,7 +59,7 @@ namespace ClinicaMedica.MVC.Controllers
         // GET: PacientesController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            var response = await client.GetAsync($"https://localhost:7268/api/Pacientes/{id}");
+            var response = await client.GetAsync($"api/Pacientes/{id}");
             var paciente = await response.Content.ReadFromJsonAsync<PacientesDTO>();
             return View(paciente);
         }
@@ -68,7 +72,7 @@ namespace ClinicaMedica.MVC.Controllers
             try
             {
                 collection.PacienteId = id;
-                var response = await client.PutAsJsonAsync($"https://localhost:7268/api/Pacientes/{id}", collection);
+                var response = await client.PutAsJsonAsync($"api/Pacientes/{id}", collection);
                 if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction(nameof(Index));

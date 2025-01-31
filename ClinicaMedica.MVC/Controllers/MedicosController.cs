@@ -1,56 +1,56 @@
 ﻿using ClinicaMedica.Model.DTOs.Basic;
-using ClinicaMedica.Model.DTOs.Create;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Packaging.Signing;
 
 namespace ClinicaMedica.MVC.Controllers
 {
-    public class EspecialidadesController : Controller
+    public class MedicosController : Controller
     {
         private readonly HttpClient _httpClient;
 
-        public EspecialidadesController(IHttpClientFactory httpClient)
+        public MedicosController(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient.CreateClient("MyApiClient");
+            _httpClient = httpClientFactory.CreateClient("MyApiClient");
         }
-        // GET: EspecialidadesController
+
+        // GET: MedicosController
         public async Task<ActionResult> Index()
         {
-            var response = await _httpClient.GetAsync("api/Especialidades");
-            if( response.IsSuccessStatusCode)
+            var response = await _httpClient.GetAsync("api/Medicos");
+            if (response.IsSuccessStatusCode)
             {
-                var especialidades = await response.Content.ReadFromJsonAsync<List<EspecialidadesDTO>>();
-                return View(especialidades);
+                var medicos = await response.Content.ReadFromJsonAsync<List<MedicosDTO>>();
+                return View(medicos);
             }
             return View();
         }
 
-        // GET: EspecialidadesController/Details/5
-        public ActionResult Details(int id)
+        // GET: MedicosController/Details/5
+        public async Task<ActionResult> Details(int id)
         {
+            var response = _httpClient.GetAsync($"api/Medicos/{id}");
+            if (response.Result.IsSuccessStatusCode)
+            {
+                var medicos = await response.Result.Content.ReadFromJsonAsync<MedicosDTO>();
+                return View(medicos);
+            }
             return View();
         }
 
-        // GET: EspecialidadesController/Create
+        // GET: MedicosController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: EspecialidadesController/Create
+        // POST: MedicosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(EspecialidadesCreacionDTO especialidadesCreacionDTO)
+        public ActionResult Create(IFormCollection collection)
         {
             try
             {
-                var response = _httpClient.PostAsJsonAsync("api/Especialidades", especialidadesCreacionDTO);
-                if(response.Result.IsSuccessStatusCode)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                return View();
+                return RedirectToAction(nameof(Index));
             }
             catch
             {
@@ -58,13 +58,13 @@ namespace ClinicaMedica.MVC.Controllers
             }
         }
 
-        // GET: EspecialidadesController/Edit/5
+        // GET: MedicosController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: EspecialidadesController/Edit/5
+        // POST: MedicosController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -79,13 +79,13 @@ namespace ClinicaMedica.MVC.Controllers
             }
         }
 
-        // GET: EspecialidadesController/Delete/5
+        // GET: MedicosController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: EspecialidadesController/Delete/5
+        // POST: MedicosController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

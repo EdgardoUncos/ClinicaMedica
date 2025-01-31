@@ -1,55 +1,64 @@
 ﻿using ClinicaMedica.Model.DTOs.Basic;
-using ClinicaMedica.Model.DTOs.Create;
+using ClinicaMedica.MVC.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Packaging.Signing;
 
 namespace ClinicaMedica.MVC.Controllers
 {
-    public class EspecialidadesController : Controller
+    public class TurnosController : Controller
     {
-        private readonly HttpClient _httpClient;
+        HttpClient client;
 
-        public EspecialidadesController(IHttpClientFactory httpClient)
+        public TurnosController(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient.CreateClient("MyApiClient");
+            client = httpClientFactory.CreateClient("MyApiClient");
         }
-        // GET: EspecialidadesController
+)
+        {
+            
+        }
+        // GET: TurnosController
         public async Task<ActionResult> Index()
         {
-            var response = await _httpClient.GetAsync("api/Especialidades");
-            if( response.IsSuccessStatusCode)
+            var response = await client.GetAsync("api/Turnos");
+            if (response.IsSuccessStatusCode)
             {
-                var especialidades = await response.Content.ReadFromJsonAsync<List<EspecialidadesDTO>>();
-                return View(especialidades);
+                var des = await response.Content.ReadAsAsync<List<TurnosDTO>>();
+                return View(des);
             }
-            return View();
+            
+            return View(null);
         }
 
-        // GET: EspecialidadesController/Details/5
+        // GET: TurnosController/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: EspecialidadesController/Create
-        public ActionResult Create()
+        // GET: TurnosController/Create
+        public async Task<ActionResult> Create()
         {
-            return View();
+            TurnosDTO turnosDTO = new TurnosDTO();
+            TurnosVM turno = new TurnosVM();
+            
+            return View(turno);
         }
 
-        // POST: EspecialidadesController/Create
+        // POST: TurnosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(EspecialidadesCreacionDTO especialidadesCreacionDTO)
+        public async Task<ActionResult> Create(TurnosDTO collection)
         {
             try
             {
-                var response = _httpClient.PostAsJsonAsync("api/Especialidades", especialidadesCreacionDTO);
-                if(response.Result.IsSuccessStatusCode)
+                var response = await client.PostAsJsonAsync("api/Turnos", collection);
+
+                if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction(nameof(Index));
                 }
+
                 return View();
             }
             catch
@@ -58,13 +67,13 @@ namespace ClinicaMedica.MVC.Controllers
             }
         }
 
-        // GET: EspecialidadesController/Edit/5
+        // GET: TurnosController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: EspecialidadesController/Edit/5
+        // POST: TurnosController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -79,13 +88,13 @@ namespace ClinicaMedica.MVC.Controllers
             }
         }
 
-        // GET: EspecialidadesController/Delete/5
+        // GET: TurnosController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: EspecialidadesController/Delete/5
+        // POST: TurnosController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
