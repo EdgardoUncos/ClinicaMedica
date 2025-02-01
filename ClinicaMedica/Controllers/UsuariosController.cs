@@ -15,11 +15,13 @@ namespace ClinicaMedica.Controllers
     {
         private readonly ApplicationDbContext _context;
         private IConfiguration _confi;
+        private readonly ILogger<UsuariosController> _logger;
 
-        public UsuariosController(ApplicationDbContext context, IConfiguration confi)
+        public UsuariosController(ApplicationDbContext context, IConfiguration confi, ILogger<UsuariosController> logger)
         {
             _context = context;
             _confi = confi;
+            _logger = logger;
         }
 
         [Authorize]
@@ -32,6 +34,7 @@ namespace ClinicaMedica.Controllers
         [HttpPost("Registrar")]
         public async Task<ActionResult<string>> CreateUser([FromBody]UsuarioDTO usuario)
         {
+            _logger.LogWarning("A user is trying to register");
             FuncionesToken.CreatePasswordHash(usuario.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             Usuarios userCreate = new Usuarios
@@ -52,6 +55,7 @@ namespace ClinicaMedica.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult<string>> Login([FromBody]LoginUsuario logUser)
         {
+            _logger.LogWarning("A user is trying to Login");
             var verify = await FuncionesToken.ValidarUsuario(logUser, _context);
 
             if (verify == null)

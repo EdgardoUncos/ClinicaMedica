@@ -24,42 +24,9 @@ namespace ClinicaMedica.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CitasMedicas>(entity =>
-            {
-                // Configurar la relación con Pacientes
-                entity.HasOne(c => c.Paciente)
-                      .WithMany()
-                      .HasForeignKey(c => c.PacienteId)
-                      .OnDelete(DeleteBehavior.Restrict); // Deshabilita la eliminación en cascada
-
-                // Configurar la relación con Medicos
-                entity.HasOne(c => c.Medicos)
-                      .WithMany()
-                      .HasForeignKey(c => c.MedicoId)
-                      .OnDelete(DeleteBehavior.Restrict); // Deshabilita la eliminación en cascada
-            });
-
-            modelBuilder.Entity<DetalleCitas>()
-            .HasKey(e => new { e.CitaMedicaId, e.ServicioId });
-
-            // Relación entre DetalleCitas y CitasMedicas
-            modelBuilder.Entity<DetalleCitas>()
-                .HasOne(d => d.CitaMedica) // Propiedad de navegación
-                .WithMany(c => c.DetalleCitas) // Relación inversa
-                .HasForeignKey(d => d.CitaMedicaId) // Clave foránea
-                .OnDelete(DeleteBehavior.Restrict); // Borrado en cascada
-
-            // Relación entre DetalleCitas y Servicios
-            modelBuilder.Entity<DetalleCitas>()
-                .HasOne(d => d.Servicio) // Propiedad de navegación
-                .WithMany(s => s.DetalleCitas) // Relación inversa
-                .HasForeignKey(d => d.ServicioId) // Clave foránea
-                .OnDelete(DeleteBehavior.Restrict); // Borrado en cascada
-
-            // Configuración de Turnos
             modelBuilder.Entity<Turnos>(entity =>
             {
-                entity.HasKey(t => t.TurnoId); // Clave primaria
+                entity.HasKey(t => t.TurnoId);
 
                 entity.Property(t => t.Fecha)
                     .HasColumnType("date")
@@ -68,26 +35,46 @@ namespace ClinicaMedica.Data
                 entity.Property(t => t.Asistencia)
                     .IsRequired();
 
-                // Relación con Horarios
+                // Relación con Horarios (corrigiendo WithMany)
                 entity.HasOne(t => t.Horario)
-                    .WithMany() // Si Horario tiene una lista de Turnos, usar .WithMany(h => h.Turnos)
+                    .WithMany(h => h.Turnos) // Ahora usando la colección de Turnos en Horarios
                     .HasForeignKey(t => t.HorarioId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // Relación con Médicos
+                // Relación con Médicos (corrigiendo WithMany)
                 entity.HasOne(t => t.Medico)
-                    .WithMany() // Si Medico tiene una lista de Turnos, usar .WithMany(m => m.Turnos)
+                    .WithMany(m => m.Turnos) // Ahora usando la colección de Turnos en Médicos
                     .HasForeignKey(t => t.MedicoId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // Relación con Pacientes (Sin eliminación en cascada)
+                // Relación con Pacientes (corrigiendo WithMany)
                 entity.HasOne(t => t.Paciente)
-                    .WithMany() // Si Paciente tiene una lista de Turnos, usar .WithMany(p => p.Turnos)
+                    .WithMany(p => p.Turnos) // Ahora usando la colección de Turnos en Pacientes
                     .HasForeignKey(t => t.PacienteId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                //DetalleCitas
+
+                modelBuilder.Entity<DetalleCitas>()
+                .HasKey(e => new { e.CitaMedicaId, e.ServicioId });
+
+                // Relación entre DetalleCitas y CitasMedicas
+                modelBuilder.Entity<DetalleCitas>()
+                    .HasOne(d => d.CitaMedica) // Propiedad de navegación
+                    .WithMany(c => c.DetalleCitas) // Relación inversa
+                    .HasForeignKey(d => d.CitaMedicaId) // Clave foránea
+                    .OnDelete(DeleteBehavior.Restrict); // Borrado en cascada
+
+                // Relación entre DetalleCitas y Servicios
+                modelBuilder.Entity<DetalleCitas>()
+                    .HasOne(d => d.Servicio) // Propiedad de navegación
+                    .WithMany(s => s.DetalleCitas) // Relación inversa
+                    .HasForeignKey(d => d.ServicioId) // Clave foránea
+                    .OnDelete(DeleteBehavior.Restrict); // Borrado en cascada
             });
 
             base.OnModelCreating(modelBuilder);
         }
+
     }
 }
