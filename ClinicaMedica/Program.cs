@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar CORS
@@ -26,6 +28,22 @@ builder.Services.AddCors(options =>
 string strCon = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(strCon));
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        }
+    
+    );
 
 builder.Services.AddAutoMapper(configuration =>
 {
@@ -66,6 +84,36 @@ builder.Services.AddSwaggerGen(c =>
         Format = "time-span",
         Example = new OpenApiString("08:00:00")
     });
+
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Cuentas Individuales",
+        Version = "v1"
+    });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = $@"JWT Authorization header using the Bearer scheme. 
+        \r\n\r\n Enter prefix (Bearer), space, and then your token. Example 'Bearer 13234hh3'"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[]{ }
+        }
+    });
 });
 
 var app = builder.Build();
@@ -80,6 +128,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 app.UseCors("PermitirBlazor");
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

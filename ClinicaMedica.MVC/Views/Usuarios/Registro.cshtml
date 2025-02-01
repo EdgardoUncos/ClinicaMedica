@@ -1,0 +1,44 @@
+﻿@model ClinicaMedica.Model.DTOs.Basic.UsuariosDTO
+
+@{
+    ViewData["Title"] = "Registro";
+}
+
+<h2>Registrate</h2>
+
+
+<hr />
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="Registro">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label asp-for="NombreUsuario" class="form-label"></label>
+                    <input asp-for="NombreUsuario" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="NombreUsuario" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Rol" class="form-label"></label>
+                    <input asp-for="Rol" class="form-control" />
+                    <span asp-validation-for="Rol" class="text-danger"></span>
+                </div>
+
+                <button class="btn btn-primary">Registrate</button>
+                <a class="btn btn-success" asp-action="Login">Deseo Loguearme</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

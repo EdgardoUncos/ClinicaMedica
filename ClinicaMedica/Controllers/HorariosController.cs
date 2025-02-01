@@ -10,9 +10,11 @@ using ClinicaMedica.Entities;
 using ClinicaMedica.DTOs.Create;
 using AutoMapper;
 using ClinicaMedica.DTOs.Basic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClinicaMedica.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class HorariosController : ControllerBase

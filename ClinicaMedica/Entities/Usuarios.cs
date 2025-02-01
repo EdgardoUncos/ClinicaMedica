@@ -18,6 +18,8 @@ namespace ClinicaMedica.Entities
         [Required]
         public byte[] PasswordSalt { get; set; } // Usar byte[] para almacenar el salt
 
+        public string Token { get; set; } = string.Empty;
+
         [Required]
         public DateTime FechaCreacion { get; set; }
 

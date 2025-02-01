@@ -11,7 +11,7 @@ namespace ClinicaMedica.MVC.Controllers
         {
             _httpClient = httpClientFactory.CreateClient("MyApiClient");
         }
-)
+
         // GET: ServiciosController
         public async Task<ActionResult> Index()
         {

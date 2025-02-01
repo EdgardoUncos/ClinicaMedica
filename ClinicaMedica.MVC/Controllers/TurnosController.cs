@@ -13,10 +13,7 @@ namespace ClinicaMedica.MVC.Controllers
         {
             client = httpClientFactory.CreateClient("MyApiClient");
         }
-)
-        {
-            
-        }
+        
         // GET: TurnosController
         public async Task<ActionResult> Index()
         {
