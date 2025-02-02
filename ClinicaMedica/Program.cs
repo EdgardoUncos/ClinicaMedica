@@ -51,30 +51,7 @@ try
 
         );
 
-    builder.Services.AddAutoMapper(configuration =>
-    {
-        configuration.CreateMap<Especialidades, EspecialidadesCreacionDTO>().ReverseMap();
-        configuration.CreateMap<Especialidades, EspecialidadesDTO>().ReverseMap();
-        configuration.CreateMap<Medicos, MedicosDTO>().ReverseMap();
-        configuration.CreateMap<Personas, PersonasDTO>().ReverseMap();
-        configuration.CreateMap<Medicos, MedicosCreacionDTO>().ReverseMap();
-        configuration.CreateMap<Personas, PersonasCreacionDTO>().ReverseMap();
-        configuration.CreateMap<Pacientes, PacientesCreacionDTO>().ReverseMap();
-        configuration.CreateMap<Pacientes, PacientesDTO>().ReverseMap();
-        configuration.CreateMap<CitasMedicas, CitasMedicasCreacionDTO>();
-        configuration.CreateMap<Servicios, ServiciosCreacionDTO>().ReverseMap();
-        configuration.CreateMap<Servicios, ServiciosDTO>().ReverseMap();
-        configuration.CreateMap<CitasMedicas, CitasMedicasCreacionDTO>().ReverseMap();
-        configuration.CreateMap<CitasMedicas, CitasMedicasDTO>().ReverseMap();
-        configuration.CreateMap<DetalleCitas, DetalleCitasDTO>().ReverseMap();
-        configuration.CreateMap<DetalleCitas, DetalleCitasCreacionDTO>().ReverseMap();
-        configuration.CreateMap<Horarios, HorariosCreacionDTO>().ReverseMap();
-        configuration.CreateMap<Horarios, HorariosDTO>().ReverseMap();
-        configuration.CreateMap<Turnos, TurnosDTO>().ReverseMap();
-        configuration.CreateMap<Turnos, TurnosCreacionDTO>().ReverseMap();
-        configuration.CreateMap<Servicios, ServiciosDTO>().ReverseMap();
-        configuration.CreateMap<Servicios, ServiciosCreacionDTO>().ReverseMap();
-    });
+    builder.Services.AddAutoMapper(typeof(Program));
 
     builder.Services.AddControllers().AddJsonOptions(options =>
     {
