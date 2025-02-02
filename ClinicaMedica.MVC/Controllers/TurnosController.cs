@@ -2,6 +2,7 @@
 using ClinicaMedica.MVC.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ClinicaMedica.MVC.Controllers
 {
@@ -34,10 +35,23 @@ namespace ClinicaMedica.MVC.Controllers
         }
 
         // GET: TurnosController/Create
-        public async Task<ActionResult> Create()
+        public async Task<ActionResult> Create(int id)
         {
             TurnosDTO turnosDTO = new TurnosDTO();
             TurnosVM turno = new TurnosVM();
+
+            turno.Paciente = await client.GetFromJsonAsync<PacientesDTO>("api/Pacientes/" + id);
+            var servicios = await client.GetFromJsonAsync<List<ServiciosDTO>>("api/Servicios");
+
+            ViewBag.Servicios = servicios.ConvertAll(s =>
+            {
+                return new SelectListItem()
+                {
+                    Text = s.Nombre,
+                    Value = s.ServicioId.ToString(),
+                    Selected = false
+                };
+            });
             
             return View(turno);
         }
@@ -63,6 +77,13 @@ namespace ClinicaMedica.MVC.Controllers
                 return View();
             }
         }
+
+
+        //[HttpPost]
+        //public async Task<IActionResult> ObtenerPrecios([FromBody] ServiciosDTO serviciosDTO)
+        //{
+        //    var servicio = await client.GetFromJsonAsync<int>("api/Servicios/" + serviciosDTO.ServicioId);
+        //}
 
         // GET: TurnosController/Edit/5
         public ActionResult Edit(int id)

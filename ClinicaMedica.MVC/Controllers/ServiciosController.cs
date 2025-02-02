@@ -1,4 +1,5 @@
 ﻿using ClinicaMedica.Model.DTOs.Basic;
+using ClinicaMedica.Model.DTOs.Create;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,11 +40,16 @@ namespace ClinicaMedica.MVC.Controllers
         // POST: ServiciosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(ServiciosCreacionDTO serviciosCreacionDTO)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var response = _httpClient.PostAsJsonAsync("api/Servicios", serviciosCreacionDTO);
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(serviciosCreacionDTO);
             }
             catch
             {
@@ -52,19 +58,39 @@ namespace ClinicaMedica.MVC.Controllers
         }
 
         // GET: ServiciosController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
+            try
+            {
+                var response =await  _httpClient.GetAsync($"api/Servicios/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsAsync<ServiciosDTO>();
+                    return View(content);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
             return View();
         }
 
         // POST: ServiciosController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task< ActionResult> Edit(int id, ServiciosDTO serviciosDTO)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var response = await _httpClient.PutAsJsonAsync($"api/Servicios/{id}", serviciosDTO);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View();
             }
             catch
             {
@@ -73,19 +99,30 @@ namespace ClinicaMedica.MVC.Controllers
         }
 
         // GET: ServiciosController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            var response = await _httpClient.GetAsync($"api/Servicios/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsAsync<ServiciosDTO>();
+                return View(content);
+            }
             return View();
         }
 
         // POST: ServiciosController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, ServiciosDTO collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var response = _httpClient.DeleteAsync($"api/Servicios/{id}");
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(collection);
             }
             catch
             {

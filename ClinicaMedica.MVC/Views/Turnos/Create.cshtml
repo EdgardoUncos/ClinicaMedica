@@ -3,36 +3,86 @@
 @{
     ViewData["Title"] = "Create";
 }
+@{
+    List<SelectListItem> Servicios = ViewBag.Servicios;
+}
 
-<h1>Create</h1>
-
-<h4>TurnosVM</h4>
+<h4>Nuevo Turno</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="HorarioId" class="control-label"></label>
-                <input asp-for="HorarioId" class="form-control" />
-                <span asp-validation-for="HorarioId" class="text-danger"></span>
+
+<div class="container">
+    
+        <div class="card">
+            <div class="card-header">
+                Orden de Consulta
             </div>
-            <div class="form-group">
-                <label asp-for="MedicoId" class="control-label"></label>
-                <input asp-for="MedicoId" class="form-control" />
-                <span asp-validation-for="MedicoId" class="text-danger"></span>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                    <label class="form-label" asp-for="Paciente.PacienteId">Id Paciente</label>
+                    <input class="form-control-sm" type="text" asp-for="Paciente.PacienteId" disabled="true" />
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label class="form-label">Nombre Paciente</label>
+                        <input class="form-control-sm" type="text" asp-for="Paciente.Persona.Nombre" disabled="true" />
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label class="form-label">Apellido</label>
+                    <input class="form-control-sm" type="text" asp-for="Paciente.Persona.Apellido" disabled="true" />
+                    </div>
+                </div>
+                <hr />
+
+                <div class="row align-items-end">
+                    <div class="col-sm-3">
+                        <label class="form-label">Servicio</label>
+                        <select  class="form-select" asp-items="@Servicios" id="tiposervicio"></select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label">Precio</label>
+                        <input class="form-control-sm" type="text" id="txtprecio"/>
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-success btn-sm" id="btnAgregar">Agregar</button>
+                        <button class="btn btn-primary btn-sm" id="btnTerminar">Terminar</button>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-bordered table-sm" id="tbProducto">
+                            <thead>
+                                <tr class="table-dark">
+                                    <th>Codigo</th>
+                                    <th>Servicio</th>
+                                    <th>Precio</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="4" class="text-end">Total General</th>
+                                    <th id="totalGeneral">0</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+
             </div>
-            <div class="form-group">
-                <label asp-for="Fecha" class="control-label"></label>
-                <input asp-for="Fecha" class="form-control" />
-                <span asp-validation-for="Fecha" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+
     </div>
 </div>
+        
 
 <div>
     <a asp-action="Index">Back to List</a>
@@ -40,4 +90,14 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(function () {
+            $("#tiposervicio").change(async function () {
+                const valorSeleccionado = $(this).val();
+                console.log(valorSeleccionado);
+            });
+        })
+    </script>
+   
 }

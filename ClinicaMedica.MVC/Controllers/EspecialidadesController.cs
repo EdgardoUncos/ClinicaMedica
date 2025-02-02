@@ -67,7 +67,7 @@ namespace ClinicaMedica.MVC.Controllers
         // POST: EspecialidadesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, EspecialidadesCreacionDTO collection)
         {
             try
             {

@@ -58,12 +58,13 @@ namespace ClinicaMedica.Controllers
         // PUT: api/Servicios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutServicios(int id, Servicios servicios)
+        public async Task<IActionResult> PutServicios(int id, ServiciosDTO serviciosDTO)
         {
-            if (id != servicios.ServicioId)
+            if (id != serviciosDTO.ServicioId)
             {
                 return BadRequest();
             }
+            var servicios = _mapper.Map<Servicios>(serviciosDTO);
 
             _context.Entry(servicios).State = EntityState.Modified;
 

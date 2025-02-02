@@ -1,4 +1,5 @@
 ﻿using ClinicaMedica.Model.DTOs.Basic;
+using ClinicaMedica.Model.DTOs.Create;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,11 +47,16 @@ namespace ClinicaMedica.MVC.Controllers
         // POST: MedicosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(MedicosCreacionDTO medicosCreacionDTO)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var response = await _httpClient.PostAsJsonAsync("api/Medicos", medicosCreacionDTO);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(medicosCreacionDTO);
             }
             catch
             {

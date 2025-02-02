@@ -101,12 +101,23 @@ namespace ClinicaMedica.Controllers
           {
               return Problem("Entity set 'ApplicationDbContext.Medicos'  is null.");
           }
-          var medicos = _mapper.Map<Medicos>(medicosCreacionDTO);
-          _context.Personas.Add(medicos.Persona);
-          _context.Medicos.Add(medicos);
-          await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMedicos", new { id = medicos.MedicoId }, medicos);
+            try
+            {
+                var medicos = _mapper.Map<Medicos>(medicosCreacionDTO);
+                _context.Personas.Add(medicos.Persona);
+                _context.Medicos.Add(medicos);
+
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetMedicos", new { id = medicos.MedicoId }, medicos);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+          
         }
 
         // DELETE: api/Medicos/5
