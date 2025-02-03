@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CookieManager;
+using ClinicaMedica.Model.DTOs.Create;
 
 namespace ClinicaMedica.MVC.Controllers
 {
@@ -59,11 +60,21 @@ namespace ClinicaMedica.MVC.Controllers
         // POST: HorariosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task< ActionResult> Create(HorariosCreacionDTO collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var response = await _httpClient.PostAsJsonAsync("api/Horarios", collection);
+
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return View();
+                }
             }
             catch
             {

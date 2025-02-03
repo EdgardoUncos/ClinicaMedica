@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ClinicaMedica.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class HorariosController : ControllerBase

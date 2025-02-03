@@ -31,7 +31,7 @@ try
 
 
     // Add services to the container.
-    string strCon = builder.Configuration.GetConnectionString("DefaultConnection");
+    string strCon = builder.Configuration.GetConnectionString("CadenaSQL");
 
     builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(strCon));
 

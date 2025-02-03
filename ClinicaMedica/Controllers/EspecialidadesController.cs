@@ -9,6 +9,7 @@ using ClinicaMedica.Data;
 using ClinicaMedica.Entities;
 using ClinicaMedica.DTOs.Create;
 using AutoMapper;
+using ClinicaMedica.DTOs.Basic;
 
 namespace ClinicaMedica.Controllers
 {
@@ -57,8 +58,10 @@ namespace ClinicaMedica.Controllers
         // PUT: api/Especialidades/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEspecialidades(int id, Especialidades especialidades)
+        public async Task<IActionResult> PutEspecialidades(int id, EspecialidadesDTO especialidadesDTO)
         {
+            var especialidades = _mapper.Map<Especialidades>(especialidadesDTO);
+
             if (id != especialidades.EspecialidadId)
             {
                 return BadRequest();

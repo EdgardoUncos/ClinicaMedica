@@ -5,6 +5,7 @@ using ClinicaMedica.Models;
 using ClinicaMedica.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicaMedica.Controllers
@@ -24,7 +25,6 @@ namespace ClinicaMedica.Controllers
             _logger = logger;
         }
 
-        [Authorize]
         [HttpGet("Datos")]
         public async Task<ActionResult<List<Usuarios>>> GetAll()
         {
@@ -35,8 +35,12 @@ namespace ClinicaMedica.Controllers
         public async Task<ActionResult<string>> CreateUser([FromBody]UsuarioDTO usuario)
         {
             _logger.LogWarning("A user is trying to register");
+
+            // Crear el Passordhash y el Salt
+
             FuncionesToken.CreatePasswordHash(usuario.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
+            // Creamos un usuario para guardar
             Usuarios userCreate = new Usuarios
             {
                 NombreUsuario = usuario.NombreUsuario,
@@ -45,17 +49,21 @@ namespace ClinicaMedica.Controllers
                 Rol = usuario.Rol                
             };
 
+            // Guardamos
             _context.Usuarios.Add(userCreate);
             await _context.SaveChangesAsync();
             var respuesta = "Registrado con Exito";
 
-            return respuesta;
+            return Ok(respuesta);
         }
 
         [HttpPost("Login")]
         public async Task<ActionResult<string>> Login([FromBody]LoginUsuario logUser)
         {
+            // NLOG
             _logger.LogWarning("A user is trying to Login");
+
+            // Valida si existe el usuario y valida la contraseña
             var verify = await FuncionesToken.ValidarUsuario(logUser, _context);
 
             if (verify == null)

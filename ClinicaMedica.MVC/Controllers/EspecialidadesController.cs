@@ -27,8 +27,15 @@ namespace ClinicaMedica.MVC.Controllers
         }
 
         // GET: EspecialidadesController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
+            var especialidad = await _httpClient.GetFromJsonAsync<EspecialidadesDTO>($"api/Especialidades/{id}");
+
+            if(especialidad != null)
+            {
+                return View(especialidad);
+            }
+            
             return View();
         }
 
@@ -59,19 +66,30 @@ namespace ClinicaMedica.MVC.Controllers
         }
 
         // GET: EspecialidadesController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task< ActionResult> Edit(int id)
         {
+            var especialidad = await _httpClient.GetFromJsonAsync<EspecialidadesDTO>($"api/Especialidades/{id}");
+
+            if(especialidad != null)
+            {
+                return View(especialidad);
+            }
             return View();
         }
 
         // POST: EspecialidadesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, EspecialidadesCreacionDTO collection)
+        public async Task<ActionResult> Edit(int id, EspecialidadesDTO collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var response = await _httpClient.PutAsJsonAsync($"api/Especialidades/{id}", collection);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(collection);
             }
             catch
             {
@@ -80,19 +98,30 @@ namespace ClinicaMedica.MVC.Controllers
         }
 
         // GET: EspecialidadesController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            var especialidad = await _httpClient.GetFromJsonAsync<EspecialidadesDTO>($"api/Especialidades/{id}");
+
+            if (especialidad != null)
+            {
+                return View(especialidad);
+            }
             return View();
         }
 
         // POST: EspecialidadesController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var response = await _httpClient.DeleteAsync($"api/Especialidades/{id}");
+                if (response.IsSuccessStatusCode)
+                { 
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(collection);
             }
             catch
             {
