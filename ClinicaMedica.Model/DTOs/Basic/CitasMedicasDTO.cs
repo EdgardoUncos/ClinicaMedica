@@ -13,10 +13,10 @@ namespace ClinicaMedica.Model.DTOs.Basic
         public float Descuento { get; set; }
         public float Total { get; set; }
 
-        public PacientesDTO Paciente { get; set; }
-        public MedicosDTO Medicos { get; set; }
+        public PacientesDTO? Paciente { get; set; }
+        public MedicosDTO? Medicos { get; set; }
 
         // Relación con DetalleCitas
-        public List<DetalleCitasDTO> DetalleCitas { get; set; }
+        public List<DetalleCitasDTO>? DetalleCitas { get; set; }
     }
 }

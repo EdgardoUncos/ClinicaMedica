@@ -26,8 +26,14 @@ namespace ClinicaMedica.MVC.Controllers
         }
 
         // GET: ServiciosController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
+            var response = await _httpClient.GetAsync($"api/Servicios/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsAsync<ServiciosDTO>();
+                return View(content);
+            }
             return View();
         }
 

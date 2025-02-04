@@ -64,11 +64,12 @@ namespace ClinicaMedica.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMedicos(int id, MedicosDTO medicosDTO)
         {
-            if (id != medicosDTO.MedicoId)
+            var medicos = _mapper.Map<Medicos>(medicosDTO);
+
+            if (id != medicos.MedicoId)
             {
                 return BadRequest();
             }
-            var medicos = _mapper.Map<Medicos>(medicosDTO);
 
             _context.Entry(medicos).State = EntityState.Modified;
             _context.Entry(medicos.Persona).State = EntityState.Modified;

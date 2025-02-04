@@ -62,8 +62,9 @@ namespace ClinicaMedica.Controllers
         // PUT: api/Horarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutHorarios(int id, Horarios horarios)
+        public async Task<IActionResult> PutHorarios(int id, HorariosDTO horariosDTO)
         {
+            var horarios = _mapper.Map<Horarios>(horariosDTO);
             if (id != horarios.HorarioId)
             {
                 return BadRequest();

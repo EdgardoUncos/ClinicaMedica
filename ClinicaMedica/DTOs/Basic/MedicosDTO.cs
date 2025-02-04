@@ -13,7 +13,7 @@ namespace ClinicaMedica.DTOs.Basic
         public float Sueldo { get; set; }
 
         // Propiedades de navegacion
-        public PersonasDTO Persona { get; set; }
+        public PersonasDTO? Persona { get; set; }
         public EspecialidadesDTO? Especialidades { get; set; }
     }
 }

@@ -87,19 +87,30 @@ namespace ClinicaMedica.MVC.Controllers
         }
 
         // GET: PacientesController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task< ActionResult> Delete(int id)
         {
+            var response = await client.GetAsync($"api/Pacientes/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var paciente = await response.Content.ReadFromJsonAsync<PacientesDTO>();
+                return View(paciente);
+            }
             return View();
         }
 
         // POST: PacientesController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, PacientesDTO collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var response = await client.DeleteAsync($"api/Pacientes/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View();
             }
             catch
             {

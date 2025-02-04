@@ -21,14 +21,14 @@ namespace ClinicaMedica.MVC.Controllers
         {
             // Obtener el token de la cookie
             var token = _cookieManager.Get<string>("Token");
-            if (string.IsNullOrEmpty(token))
-            {
-                // Manejar el caso en que el token no se encuentre
-                return RedirectToAction("Login", "Usuarios");
-            }
+            //if (string.IsNullOrEmpty(token))
+            //{
+            //    // Manejar el caso en que el token no se encuentre
+            //    return RedirectToAction("Login", "Usuarios");
+            //}
 
-            // Agregar el token al encabezado de autorización
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            //// Agregar el token al encabezado de autorización
+            //_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             // Hacer la Peticion al API Protegida
             var response = await _httpClient.GetAsync("api/Horarios");
@@ -85,17 +85,24 @@ namespace ClinicaMedica.MVC.Controllers
         // GET: HorariosController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var response = _httpClient.GetAsync($"api/Horarios/{id}").Result;
+            var horarioDTO = response.Content.ReadFromJsonAsync<HorariosDTO>().Result;
+            return View(horarioDTO);
         }
 
         // POST: HorariosController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, HorariosDTO collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var response = _httpClient.PutAsJsonAsync($"api/Horarios/{id}", collection).Result;
+                if(response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(collection);
             }
             catch
             {
@@ -106,17 +113,28 @@ namespace ClinicaMedica.MVC.Controllers
         // GET: HorariosController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var response = _httpClient.GetAsync($"api/Horarios/{id}").Result;
+            var HorariosDTO = response.Content.ReadFromJsonAsync<HorariosDTO>().Result;
+            return View(HorariosDTO);
         }
 
         // POST: HorariosController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, HorariosDTO collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var response = _httpClient.DeleteAsync($"api/Horarios/{id}").Result;
+                if(response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return View(collection);
+                }
+                
             }
             catch
             {

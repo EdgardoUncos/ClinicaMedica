@@ -7,8 +7,6 @@
     List<SelectListItem> Servicios = ViewBag.Servicios;
 }
 
-<h4>Nuevo Turno</h4>
-<hr />
 
 <div class="container">
     
@@ -39,11 +37,15 @@
                 <div class="row align-items-end">
                     <div class="col-sm-3">
                         <label class="form-label">Servicio</label>
-                        <select  class="form-select" asp-items="@Servicios" id="tiposervicio"></select>
+                    <select class="form-select" asp-items="@Servicios" id="txtproducto"></select>
                     </div>
                     <div class="col-sm-3">
                         <label class="form-label">Precio</label>
                         <input asp-for="Fecha" class="form-control-sm" type="text" id="txtprecio" disabled="true"/>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label">Cantidad</label>
+                        <input class="form-control form-control-sm" type="text" id="txtcantidad">
                     </div>
                     <div class="col-sm-3">
                         <button class="btn btn-success btn-sm" id="btnAgregar">Agregar</button>
@@ -92,6 +94,21 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     
     <script>
+
+        var totalGeneral = 0;
+
+        $("#btnAgregar").on("click", function () {
+
+            var precio = parseFloat($("#txtprecio").val());
+            var cantidad = parseFloat($("#txtcantidad").val());
+            var total = precio * cantidad;
+
+            console.log("precio", precio);
+            console.log("cantidad", precio);
+            console.log("total", precio);
+
+        })
+
         $(function () {
             $("#tiposervicio").change(async function () {
                 const valorSeleccionado = $(this).val();

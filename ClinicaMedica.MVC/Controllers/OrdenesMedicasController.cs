@@ -6,45 +6,45 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ClinicaMedica.MVC.Controllers
 {
-    public class TurnosController : Controller
+    public class OrdenesMedicasController : Controller
     {
-        HttpClient client;
+        private readonly HttpClient _httpClient;
 
-        public TurnosController(IHttpClientFactory httpClientFactory)
+        public OrdenesMedicasController(IHttpClientFactory httpClientFactory)
         {
-            client = httpClientFactory.CreateClient("MyApiClient");
+            _httpClient = httpClientFactory.CreateClient("MyApiClient");
         }
-        
-        // GET: TurnosController
+
+        // GET: OrdenesMedicasController
         public async Task<ActionResult> Index()
         {
-            var response = await client.GetAsync("api/Turnos");
+            var response = await _httpClient.GetAsync("api/CitasMedicas");
             if (response.IsSuccessStatusCode)
             {
-                var des = await response.Content.ReadAsAsync<List<TurnosDTO>>();
-                return View(des);
+                var ordenesMedicas = await response.Content.ReadFromJsonAsync<IEnumerable<CitasMedicasDTO>>();
+                return View(ordenesMedicas);
             }
-            
-            return View(null);
+            return View();
         }
 
-        // GET: TurnosController/Details/5
+        // GET: OrdenesMedicasController/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: TurnosController/Create
+        // GET: OrdenesMedicasController/Create
         public async Task<ActionResult> Create(int id)
         {
-            TurnosDTO turnosDTO = new TurnosDTO();
-            TurnosVM turno = new TurnosVM();
+            OrdenesVM ordenVM = new OrdenesVM();
 
             try
             {
-                var res = await client.GetFromJsonAsync<PacientesDTO>("api/Pacientes/" + id);
-                turno.Paciente = await client.GetFromJsonAsync<PacientesDTO>("api/Pacientes/" + id);
-                var servicios = await client.GetFromJsonAsync<List<ServiciosDTO>>("api/Servicios");
+                var res = await _httpClient.GetFromJsonAsync<PacientesDTO>($"api/Pacientes/{id}");
+                ordenVM.Paciente = res;
+                var servicios = await _httpClient.GetFromJsonAsync<List<ServiciosDTO>>("api/Servicios");
+                var medicos = await _httpClient.GetFromJsonAsync<List<MedicosDTO>>("api/Medicos");
+                ordenVM.Medicos = medicos;
 
                 ViewBag.Servicios = servicios.ConvertAll(s =>
                 {
@@ -56,31 +56,24 @@ namespace ClinicaMedica.MVC.Controllers
                     };
                 });
 
-                return View(turno);
+                return View(ordenVM);
+
+
             }
             catch (Exception ex)
             {
-
-                return View(turno);
+                return View();
             }
-            
         }
 
-        // POST: TurnosController/Create
+        // POST: OrdenesMedicasController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(TurnosDTO collection)
+        public ActionResult Create(IFormCollection collection)
         {
             try
             {
-                var response = await client.PostAsJsonAsync("api/Turnos", collection);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-
-                return View();
+                return RedirectToAction(nameof(Index));
             }
             catch
             {
@@ -88,20 +81,13 @@ namespace ClinicaMedica.MVC.Controllers
             }
         }
 
-
-        //[HttpPost]
-        //public async Task<IActionResult> ObtenerPrecios([FromBody] ServiciosDTO serviciosDTO)
-        //{
-        //    var servicio = await client.GetFromJsonAsync<int>("api/Servicios/" + serviciosDTO.ServicioId);
-        //}
-
-        // GET: TurnosController/Edit/5
+        // GET: OrdenesMedicasController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: TurnosController/Edit/5
+        // POST: OrdenesMedicasController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -116,14 +102,13 @@ namespace ClinicaMedica.MVC.Controllers
             }
         }
 
-        // GET: TurnosController/Delete/5
+        // GET: OrdenesMedicasController/Delete/5
         public ActionResult Delete(int id)
         {
-
             return View();
         }
 
-        // POST: TurnosController/Delete/5
+        // POST: OrdenesMedicasController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
@@ -136,6 +121,17 @@ namespace ClinicaMedica.MVC.Controllers
             {
                 return View();
             }
+        }
+
+        // Metodos complementarios
+        [HttpPost]
+        public async Task<IActionResult> GetPrice([FromBody] int id)
+        {
+            var urlService = $"api/Servicios/{id}";
+
+            var servicio = await _httpClient.GetFromJsonAsync<ServiciosDTO>(urlService);
+
+            return Ok(servicio.Precio);
         }
     }
 }

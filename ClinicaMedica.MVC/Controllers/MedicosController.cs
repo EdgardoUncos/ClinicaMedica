@@ -67,17 +67,30 @@ namespace ClinicaMedica.MVC.Controllers
         // GET: MedicosController/Edit/5
         public ActionResult Edit(int id)
         {
+            var response = _httpClient.GetAsync($"api/Medicos/{id}");
+            if (response.Result.IsSuccessStatusCode)
+            {
+                var medicos = response.Result.Content.ReadFromJsonAsync<MedicosDTO>().Result;
+                return View(medicos);
+            }
             return View();
         }
 
         // POST: MedicosController/Edit/5
+        // Faltaria crea un nuevo Put para que modifique a la persona
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, MedicosDTO collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var response = await _httpClient.PutAsJsonAsync($"api/Medicos/{id}", collection);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(collection);
             }
             catch
             {
@@ -88,17 +101,28 @@ namespace ClinicaMedica.MVC.Controllers
         // GET: MedicosController/Delete/5
         public ActionResult Delete(int id)
         {
+            var response = _httpClient.GetAsync($"api/Medicos/{id}");
+            if (response.Result.IsSuccessStatusCode)
+            {
+                var medicos = response.Result.Content.ReadFromJsonAsync<MedicosDTO>().Result;
+                return View(medicos);
+            }
             return View();
         }
 
         // POST: MedicosController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, MedicosDTO collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var response = _httpClient.DeleteAsync($"api/Medicos/{id}");
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(collection);
             }
             catch
             {

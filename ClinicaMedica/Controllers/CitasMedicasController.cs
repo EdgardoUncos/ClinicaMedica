@@ -34,8 +34,10 @@ namespace ClinicaMedica.Controllers
           {
               return NotFound();
           }
-            var citasMedicas = await _context.CitasMedicas.Include(c => c.Medicos)
-                  .Include(c => c.Paciente).Include(c => c.DetalleCitas).ToListAsync();
+            var citasMedicas = await _context.CitasMedicas.Include(c => c.Medicos.Persona)
+                .Include(c => c.Medicos)
+                .Include(c => c.Paciente).Include(c => c.Paciente.Persona)
+                .Include(c => c.DetalleCitas).ToListAsync();
             
             var citasMedicasDTO = _mapper.Map<List<CitasMedicasDTO>>(citasMedicas);
             

@@ -1,0 +1,59 @@
+﻿@model IEnumerable<ClinicaMedica.Model.DTOs.Basic.CitasMedicasDTO>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CitaMedicaId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Paciente.PacienteId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Paciente.Persona.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Medicos.Persona.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Total)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CitaMedicaId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Paciente.PacienteId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Paciente.Persona.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Medicos.Persona.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Total)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id=item.CitaMedicaId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.CitaMedicaId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.CitaMedicaId })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
