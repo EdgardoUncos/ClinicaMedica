@@ -142,32 +142,53 @@
             var servicioSeleccionado = $("#txtproducto option:selected").text();
             var codigo = $("#txtproducto").val();
 
-            $("#tbProducto tbody").append(
-                $("<tr>").append(
-                    $("<td>").text(codigo),
-                    $("<td>").text(servicioSeleccionado),
-                    $("<td>").text(precio.toFixed(2)),
-                    $("<td>").text(cantidad),
-                    $("<td>").text(total.toFixed(2)),
-                    $("<td>").append(
-                        $('<button class="btn btn-danger btn-sm">').text("Eliminar").on("click", function () {
-                            var fila = $(this).closest("tr");
-                            var totalFila = parseFloat(fila.find("td:eq(4)").text());
-                            totalGeneral -= totalFila;
-                            $("#totalGeneral").text(totalGeneral.toFixed(2));
-                            fila.remove();
-                        })
-                    )
-                )
-            );
+            var filaExistente = $("#tbProducto tbody tr").filter(function () {
+                return $(this).find("td:first").text() === codigo; // Busca por código
+            });
 
-            totalGeneral += total;
+            if (filaExistente.length > 0) {
+                // Si el producto ya existe en la tabla, actualizar cantidad y total
+                var cantidadActual = parseFloat(filaExistente.find("td:eq(3)").text()); // Obtiene la cantidad actual
+                var nuevaCantidad = cantidadActual + cantidad;
+                var nuevoTotal = nuevaCantidad * precio;
+
+                filaExistente.find("td:eq(3)").text(nuevaCantidad); // Actualiza cantidad
+                filaExistente.find("td:eq(4)").text(nuevoTotal.toFixed(2)); // Actualiza total
+            } else {
+                // Si el producto no existe, agregar una nueva fila
+                $("#tbProducto tbody").append(
+                    $("<tr>").append(
+                        $("<td>").text(codigo),
+                        $("<td>").text(servicioSeleccionado),
+                        $("<td>").text(precio.toFixed(2)),
+                        $("<td>").text(cantidad),
+                        $("<td>").text(total.toFixed(2)),
+                        $("<td>").append(
+                            $('<button class="btn btn-danger btn-sm">').text("Eliminar").on("click", function () {
+                                var fila = $(this).closest("tr");
+                                var totalFila = parseFloat(fila.find("td:eq(4)").text());
+                                totalGeneral -= totalFila;
+                                $("#totalGeneral").text(totalGeneral.toFixed(2));
+                                fila.remove();
+                            })
+                        )
+                    )
+                );
+            }
+
+            // Recalcular el total general
+            totalGeneral = 0;
+            $("#tbProducto tbody tr").each(function () {
+                totalGeneral += parseFloat($(this).find("td:eq(4)").text());
+            });
+
             $("#totalGeneral").text(totalGeneral.toFixed(2));
 
+            // Limpiar inputs y volver a enfocar
             $("#txtproducto").val("");
             $("#txtprecio").val("");
             $("#txtcantidad").val("");
-            $("#txtproducto").focus():
+            $("#txtproducto").focus();
         });
 
 
