@@ -20,7 +20,7 @@
             <div class="row">
                 <div class="col-sm-4">
                     <label class="form-label" asp-for="Paciente.PacienteId">Id Paciente</label>
-                    <input class="form-control-sm" type="text" asp-for="Paciente.PacienteId" disabled="true" />
+                    <input class="form-control-sm" type="text" asp-for="Paciente.PacienteId" disabled="true" id="pacienteid" />
                 </div>
 
                 <div class="col-sm-4">
@@ -39,7 +39,7 @@
                 <div class="col-sm-3">
                     <label class="form-label">Servicio</label>
                     <select class="form-select" asp-items="@Servicios" id="txtproducto">
-                        
+                        <option value="" selected disabled>Seleccione un servicio</option>
                     </select>
                 </div>
                 <div class="col-sm-3">
@@ -97,6 +97,8 @@
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 
     <script>
+
+        $("#txtproducto").val(""); // Esto seleccionará la opción vacía
 
         var totalGeneral = 0;
 
@@ -191,6 +193,56 @@
             $("#txtproducto").focus();
         });
 
+        // ------ Envio de la OrdenMedica con sus detalles -------
+
+        $("#btnTerminar").on("click", function () {
+            console.log("Venta cerrada");
+
+            var detallecitas = [];
+            var total = 0;
+
+            $("#tbProducto > tbody > tr").each(function () {
+                detallecitas.push({
+                    CitaMedicaId: '0',
+                    ServicioId: $(this).find('td:eq(0)').text() // Código del servicio
+                });
+                total += parseFloat($(this).find('td:eq(4)').text());
+            });
+
+            //var pacienteId = $("input[asp-for='Paciente.PacienteId']").val(); // Asegurar que se obtiene el ID del paciente
+
+            var pacienteId = $("#pacienteid").val();
+            var medicoId = "1";
+
+            var CitasMedicasCreacionDTO = {
+                PacienteId: pacienteId,
+                MedicoId: medicoId,
+                DetalleCitas: detallecitas,
+                Total: total
+            };
+
+            console.log(detallecitas);
+            console.log(CitasMedicasCreacionDTO);
+
+            $.ajax({
+                url: '@Url.Action("CreateOM", "OrdenesMedicas")',
+                type: "POST",
+                data: JSON.stringify(CitasMedicasCreacionDTO),
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.respuesta) {
+                        alert("Orden Médica Registrada");
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error en la petición:", error);
+                    alert("Ocurrió un error al registrar la orden.");
+                }
+            });
+        });
+        
 
     </script>
 

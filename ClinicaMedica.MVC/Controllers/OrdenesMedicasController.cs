@@ -1,4 +1,5 @@
 ﻿using ClinicaMedica.Model.DTOs.Basic;
+using ClinicaMedica.Model.DTOs.Create;
 using ClinicaMedica.MVC.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -59,6 +60,30 @@ namespace ClinicaMedica.MVC.Controllers
                 return View(ordenVM);
 
 
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateOM([FromBody]CitasMedicasCreacionDTO citaMedicaCreacionDTO)
+        {
+            try
+            {
+                
+
+                var response = await _httpClient.PostAsJsonAsync("api/CitasMedicas", citaMedicaCreacionDTO);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return View();
+                }
             }
             catch (Exception ex)
             {
