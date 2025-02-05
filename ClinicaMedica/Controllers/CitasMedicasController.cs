@@ -34,8 +34,8 @@ namespace ClinicaMedica.Controllers
           {
               return NotFound();
           }
-            var citasMedicas = await _context.CitasMedicas.Include(c => c.Medicos.Persona)
-                .Include(c => c.Medicos)
+            var citasMedicas = await _context.CitasMedicas.Include(c => c.Medico.Persona)
+                .Include(c => c.Medico)
                 .Include(c => c.Paciente).Include(c => c.Paciente.Persona)
                 .Include(c => c.DetalleCitas).ToListAsync();
             

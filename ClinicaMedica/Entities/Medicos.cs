@@ -22,5 +22,6 @@ namespace ClinicaMedica.Entities
         public Especialidades Especialidades { get; set; }
 
         public ICollection<Turnos> Turnos { get; set; }
+        public ICollection<CitasMedicas> CitasMedicas { get; set; }
     }
 }

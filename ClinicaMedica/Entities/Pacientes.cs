@@ -15,5 +15,7 @@ namespace ClinicaMedica.Entities
         public Personas Persona { get; set; }
 
         public ICollection<Turnos> Turnos { get; set; }
+
+        public ICollection<CitasMedicas> CitasMedicas { get; set; }
     }
 }

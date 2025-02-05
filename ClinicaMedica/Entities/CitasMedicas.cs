@@ -6,23 +6,21 @@ namespace ClinicaMedica.Entities
 {
     public class CitasMedicas
     {
-        [Key]
         public int CitaMedicaId { get; set; }
 
-        //Claves foraneas
+        // Claves foráneas (pueden ser null si es necesario)
         public int PacienteId { get; set; }
         public int MedicoId { get; set; }
 
         public float Descuento { get; set; }
         public float Total { get; set; }
 
-        [ForeignKey(nameof(PacienteId))]
-        public Pacientes Paciente {  get; set; }
-        [ForeignKey(nameof(MedicoId))]
-        public Medicos Medicos { get; set; }
+        // Propiedades de navegación
+        public Pacientes Paciente { get; set; }
+        public Medicos Medico { get; set; }
 
         // Relación con DetalleCitas
         public ICollection<DetalleCitas> DetalleCitas { get; set; }
-
     }
+
 }
