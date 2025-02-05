@@ -106,6 +106,49 @@ namespace ClinicaMedica.Data
                       .OnDelete(DeleteBehavior.NoAction);
             });
 
+            modelBuilder.Entity<Medicos>(entity =>
+            {
+                entity.HasKey(m => m.MedicoId);
+
+                entity.Property(m => m.Sueldo)
+                    .HasColumnType("decimal(18,2)") // Se recomienda usar decimal en lugar de float para valores monetarios
+                    .IsRequired();
+
+                entity.HasOne(m => m.Persona)
+                    .WithMany() // Si `Personas` no tiene una lista de médicos, se deja vacío
+                    .HasForeignKey(m => m.PersonaId)
+                    .OnDelete(DeleteBehavior.Restrict); // Evita eliminación en cascada accidental
+
+                entity.HasOne(m => m.Especialidad)
+                    .WithMany(e => e.Medicos) // Se vincula con la propiedad de navegación en Especialidades
+                    .HasForeignKey(m => m.EspecialidadId)
+                    .OnDelete(DeleteBehavior.Restrict); // Evita eliminaciones accidentales
+
+                entity.HasMany(m => m.Turnos)
+                    .WithOne(t => t.Medico) // Asegúrate de que `Turnos` tenga una propiedad `Medico`
+                    .HasForeignKey(t => t.MedicoId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(m => m.CitasMedicas)
+                    .WithOne(c => c.Medico) // Asegúrate de que `CitasMedicas` tenga una propiedad `Medico`
+                    .HasForeignKey(c => c.MedicoId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<Especialidades>(entity =>
+            {
+                entity.HasKey(e => e.EspecialidadId);
+
+                entity.Property(e => e.Detalle)
+                    .HasMaxLength(300)
+                    .IsRequired();
+
+                entity.HasMany(e => e.Medicos)
+                    .WithOne(m => m.Especialidad) // Debes asegurarte de que la clase Medicos tiene una propiedad de navegación llamada Especialidad
+                    .HasForeignKey(m => m.EspecialidadId)
+                    .OnDelete(DeleteBehavior.NoAction); // Esto define el comportamiento en cascada al eliminar una especialidad
+            });
+
 
             base.OnModelCreating(modelBuilder);
         }

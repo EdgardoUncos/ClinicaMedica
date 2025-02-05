@@ -12,6 +12,6 @@ namespace ClinicaMedica.Model.DTOs.Basic
 
         // Propiedades de navegacion
         public PersonasDTO? Persona { get; set; }
-        public EspecialidadesDTO? Especialidades { get; set; }
+        public EspecialidadesDTO? Especialidad { get; set; }
     }
 }

@@ -34,7 +34,7 @@ namespace ClinicaMedica.Controllers
           {
               return NotFound();
           }
-            var medico = await _context.Medicos.Include(m => m.Especialidades).Include(m => m.Persona).ToListAsync();
+            var medico = await _context.Medicos.Include(m => m.Especialidad).Include(m => m.Persona).ToListAsync();
 
             var lista = _mapper.Map<List<MedicosDTO>>(medico);
             return lista;
@@ -49,7 +49,7 @@ namespace ClinicaMedica.Controllers
               return NotFound();
           }
             var medicos = await _context.Medicos.Include(m => m.Persona)
-                .Include(m => m.Especialidades).FirstOrDefaultAsync(m => m.EspecialidadId == id);
+                .Include(m => m.Especialidad).FirstOrDefaultAsync(m => m.EspecialidadId == id);
 
             if (medicos == null)
             {
