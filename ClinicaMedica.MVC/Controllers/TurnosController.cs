@@ -1,4 +1,6 @@
 ﻿using ClinicaMedica.Model.DTOs.Basic;
+using ClinicaMedica.Model.DTOs.Create;
+using ClinicaMedica.Model.ViewModel;
 using ClinicaMedica.MVC.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -136,6 +138,45 @@ namespace ClinicaMedica.MVC.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Definir()
+        {
+            var horariosDTOs = await client.GetFromJsonAsync<List<HorariosDTO>>("api/Horarios");
+            var medicosDTOs = await client.GetFromJsonAsync<List<MedicosDTO>>("api/Medicos");
+
+            var turnoVM = new TurnoViewModel()
+            {
+                Horarios = horariosDTOs,
+                Medicos = medicosDTOs
+            };
+            return View(turnoVM);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Definir(TurnoViewModel turnoViewModel)
+        {
+            var listaTurnos = turnoViewModel.Horarios.Select(h =>
+                                    new TurnosCreacionDTO()
+                                    {
+                                        HorarioId = h.HorarioId,
+                                        MedicoId = 1,
+                                        Fecha = DateTime.Now,
+                                        Asistencia = false,
+                                        Estado = "Habilitado"
+                                    })
+                .Where(h => h.Estado == "Habilitado");
+
+            var response = await client.PostAsJsonAsync("api/Turnos/TurnosMasivos", listaTurnos);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(turnoViewModel);
+
         }
     }
 }

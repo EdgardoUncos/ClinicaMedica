@@ -101,6 +101,44 @@ namespace ClinicaMedica.Controllers
             return CreatedAtAction("GetTurnos", new { id = turnos.TurnoId }, turnos);
         }
 
+        [HttpPost("TurnosMasivos")]
+        public async Task<ActionResult<Turnos>> PostTurnosMasivos([FromBody]List<TurnosCreacionDTO> turnosCreacionDTO)
+        {
+          if (_context.Turnos == null)
+          {
+              return Problem("Entity set 'ApplicationDbContext.Turnos'  is null.");
+          }
+           
+            // Mapear cada TurnoCreacionDTO a Turnos
+            var turnos = turnosCreacionDTO.Select(dto => _mapper.Map<Turnos>(dto)).ToList();
+
+            // Agregar todos los turnos al contexto
+            foreach (var turno in turnos)
+            {
+                _context.Turnos.Add(turno);
+            }
+
+            try
+            {
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+                // Devolver una respuesta con los IDs de los turnos creados
+                var turnosIds = turnos.Select(t => t.TurnoId).ToList();
+                return CreatedAtAction("GetTurnos", new { ids = turnosIds }, turnos);
+            }
+            catch (Exception ex)
+            {
+
+                return Problem(ex.ToString());
+            }
+
+            
+
+
+        }
+
+
         // DELETE: api/Turnos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTurnos(int id)

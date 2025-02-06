@@ -63,6 +63,11 @@ namespace ClinicaMedica.Data
                     .HasForeignKey(t => t.MedicoId)
                     .OnDelete(DeleteBehavior.Restrict);
 
+                // Agregar restricción UNIQUE en HorarioId, MedicoId y Fecha
+                entity.HasIndex(t => new { t.HorarioId, t.MedicoId, t.Fecha })
+                    .IsUnique()
+                    .HasDatabaseName("UQ_Turnos_Horario_Medico_Fecha");
+
             });
             //DetalleCitas
 

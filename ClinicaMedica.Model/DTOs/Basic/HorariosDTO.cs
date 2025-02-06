@@ -12,5 +12,7 @@ namespace ClinicaMedica.Model.DTOs.Basic
         public TimeSpan HorarioInicio { get; set; }
         public TimeSpan HorarioFin { get; set; }
 
+        public bool Habilitado { get; set; }    
+
     }
 }
