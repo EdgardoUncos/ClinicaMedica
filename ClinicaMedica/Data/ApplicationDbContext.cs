@@ -21,6 +21,8 @@ namespace ClinicaMedica.Data
         public DbSet<DetalleCitas> DetalleCitas { get; set; }
         public DbSet<Horarios> Horarios { get; set; }
         public DbSet<Turnos> Turnos { get; set; }
+        public DbSet<Paquetes> Paquetes { get; set; }
+        public DbSet<PaquetesServicios> PaquetesServicios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -154,6 +156,69 @@ namespace ClinicaMedica.Data
                     .OnDelete(DeleteBehavior.NoAction); // Esto define el comportamiento en cascada al eliminar una especialidad
             });
 
+            modelBuilder.Entity<Paquetes>(entity =>
+            {
+                entity.HasKey(p => p.PaqueteId); // Define la clave primaria
+
+                entity.Property(p => p.Nombre)
+                    .IsRequired() // Requerido
+                    .HasMaxLength(100); // Longitud máxima de 100 caracteres
+
+                entity.Property(p => p.Precio)
+                    .IsRequired() // Requerido
+                    .HasColumnType("decimal(10,2)"); // Define el tipo de dato en la BD
+
+                entity.HasMany(p => p.PaquetesServicios) // Relación con PaquetesServicios
+                    .WithOne(ps => ps.Paquete)
+                    .HasForeignKey(ps => ps.PaqueteId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Configuración de la tabla Servicios
+            modelBuilder.Entity<Servicios>(entity =>
+            {
+                entity.HasKey(s => s.ServicioId); // Define la clave primaria
+
+                entity.Property(s => s.Nombre)
+                    .IsRequired() // Campo obligatorio
+                    .HasMaxLength(100); // Longitud máxima de 100 caracteres
+
+                entity.Property(s => s.Descripcion)
+                    .HasMaxLength(300); // Longitud máxima de 300 caracteres
+
+                entity.Property(s => s.Precio)
+                    .IsRequired() // Campo obligatorio
+                    .HasColumnType("decimal(10,2)") // Define el tipo de dato en la BD
+                    .HasDefaultValue(0); // Valor predeterminado
+
+                entity.HasMany(s => s.DetalleCitas) // Relación con DetalleCitas
+                    .WithOne(d => d.Servicio)
+                    .HasForeignKey(d => d.ServicioId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasMany(s => s.PaquetesServicios) // Relación con PaquetesServicios
+                    .WithOne(ps => ps.Servicio)
+                    .HasForeignKey(ps => ps.ServicioId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+
+        // Configuración de la clave primaria compuesta en PaquetesServicios
+        modelBuilder.Entity<PaquetesServicios>()
+                .HasKey(ps => new { ps.PaqueteId, ps.ServicioId });
+
+            // Configuración de las relaciones
+            modelBuilder.Entity<PaquetesServicios>()
+                .HasOne(ps => ps.Paquete)
+                .WithMany(p => p.PaquetesServicios)
+                .HasForeignKey(ps => ps.PaqueteId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PaquetesServicios>()
+                .HasOne(ps => ps.Servicio)
+                .WithMany(s => s.PaquetesServicios)
+                .HasForeignKey(ps => ps.ServicioId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -4,6 +4,7 @@ using ClinicaMedica.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicaMedica.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250207141333_Entity-Paquetes")]
+    partial class EntityPaquetes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,27 +206,12 @@ namespace ClinicaMedica.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Precio")
-                        .HasColumnType("decimal(10,2)");
+                    b.Property<float>("Precio")
+                        .HasColumnType("real");
 
                     b.HasKey("PaqueteId");
 
                     b.ToTable("Paquetes");
-                });
-
-            modelBuilder.Entity("ClinicaMedica.Entities.PaquetesServicios", b =>
-                {
-                    b.Property<int>("PaqueteId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServicioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PaqueteId", "ServicioId");
-
-                    b.HasIndex("ServicioId");
-
-                    b.ToTable("PaquetesServicios");
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.Personas", b =>
@@ -280,10 +267,8 @@ namespace ClinicaMedica.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<decimal>("Precio")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(10,2)")
-                        .HasDefaultValue(0m);
+                    b.Property<float>("Precio")
+                        .HasColumnType("real");
 
                     b.HasKey("ServicioId");
 
@@ -401,7 +386,7 @@ namespace ClinicaMedica.Migrations
                     b.HasOne("ClinicaMedica.Entities.Servicios", "Servicio")
                         .WithMany("DetalleCitas")
                         .HasForeignKey("ServicioId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CitaMedica");
@@ -448,25 +433,6 @@ namespace ClinicaMedica.Migrations
                         .IsRequired();
 
                     b.Navigation("Pago");
-                });
-
-            modelBuilder.Entity("ClinicaMedica.Entities.PaquetesServicios", b =>
-                {
-                    b.HasOne("ClinicaMedica.Entities.Paquetes", "Paquete")
-                        .WithMany("PaquetesServicios")
-                        .HasForeignKey("PaqueteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ClinicaMedica.Entities.Servicios", "Servicio")
-                        .WithMany("PaquetesServicios")
-                        .HasForeignKey("ServicioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Paquete");
-
-                    b.Navigation("Servicio");
                 });
 
             modelBuilder.Entity("ClinicaMedica.Entities.Turnos", b =>
@@ -529,16 +495,9 @@ namespace ClinicaMedica.Migrations
                     b.Navigation("Turnos");
                 });
 
-            modelBuilder.Entity("ClinicaMedica.Entities.Paquetes", b =>
-                {
-                    b.Navigation("PaquetesServicios");
-                });
-
             modelBuilder.Entity("ClinicaMedica.Entities.Servicios", b =>
                 {
                     b.Navigation("DetalleCitas");
-
-                    b.Navigation("PaquetesServicios");
                 });
 #pragma warning restore 612, 618
         }
