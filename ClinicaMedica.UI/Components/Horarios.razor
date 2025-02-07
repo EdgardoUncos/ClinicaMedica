@@ -1,0 +1,45 @@
+﻿@using ClinicaMedica.Model.DTOs.Basic
+
+<div class="container m-1">
+    <h3>Setear turnos del dia : Lunes 1 Enero</h3>
+</div>
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Horario Id</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Habilitar</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < ListaHorarios.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input value="@ListaHorarios[i].HorarioId" class="form-control" readonly />
+                    </td>
+                    <td>
+                        <input value="@ListaHorarios[i].HorarioInicio" class="form-control" readonly />
+                    </td>
+                    <td><input value="@ListaHorarios[i].HorarioFin" class="form-control" readonly /></td>
+                    <td><input class="form-check" type="checkbox"/></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button class="btn btn-primary">Crear</button>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public List<HorariosDTO> ListaHorarios { get; set; }
+
+}
+

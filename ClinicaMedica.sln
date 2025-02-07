@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClinicaMedica.UI", "Clinica
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClinicaMedica.Model", "ClinicaMedica.Model\ClinicaMedica.Model.csproj", "{59D06D2E-3EC6-4C4B-ADA2-9E76D255F75B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicaMedica.MVC", "ClinicaMedica.MVC\ClinicaMedica.MVC.csproj", "{C47C6717-F5BA-4F0A-A56A-908AA98C8570}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClinicaMedica.MVC", "ClinicaMedica.MVC\ClinicaMedica.MVC.csproj", "{C47C6717-F5BA-4F0A-A56A-908AA98C8570}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
