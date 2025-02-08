@@ -1,0 +1,221 @@
+﻿@page "/OrdenMedica/{id:int?}"
+@inject HttpClient Http
+@inject NavigationManager Nav
+@using ClinicaMedica.Model.DTOs.Basic
+@using ClinicaMedica.Model.ViewModel
+
+
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">Orden Medica</div>
+
+        <div class="card-body">
+            @if (isLoading)
+            {
+                <div class="text-center">
+                    <img src="~/ZKZg.gif" alt="Cargando..." width="50" height="50" />
+                    <p>Cargando datos...</p>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label class="form-label">Id Paciente</label>
+                        <input class="form-control-sm" type="text" @bind-value=pacienteDTO.PacienteId disabled="true" />
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label class="form-label">Nombre Paciente</label>
+                        <input class="form-control-sm" type="text" @bind-value=pacienteDTO.Persona.Nombre disabled="true" />
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label class="form-label">Apellido</label>
+                        <input class="form-control-sm" type="text" @bind-value=pacienteDTO.Persona.Apellido disabled="true" />
+                    </div>
+                </div>
+                <hr />
+
+                <div class="row align-items-end">
+                    <div class="col-sm-3">
+                        <label class="form-label">Servicio</label>
+                        <select class="form-select" @onchange=FirsDropChange>
+                            <option value="">Seleccionar servicio </option>
+                            @if (ListaServicios != null)
+                            {
+                                @foreach (var item in ListaServicios)
+                                {
+                                        <option value="@item.ServicioId">@item.Nombre</option>
+                                    }
+                                }
+                        </select>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="form-label">Precio</label>
+                        <input class="form-control-sm" type="tel" disabled @bind-value=priceService/>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="form-label">Cantidad</label>
+                        <input class="form-control form-control-sm" type="number" @bind-value=Quantity>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <button class="btn btn-success btn-sm" @onclick=AgregarDetalle>Agregar</button>
+                        <button class="btn btn-primary btn-sm">Terminar</button>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-bordered table-sm" id="tbProducto">
+                            <thead>
+                                <tr class="table-dark">
+                                    <th>Código</th>
+                                    <th>Servicio</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Detalles.Count > 0)
+                                {
+                                    @foreach (var item in Detalles)
+                                    {
+                                        <tr>
+                                        <td>@item.ServicioId</td>
+                                        <td>Nombre servicio</td>
+                                        <td>Precio del servio</td>
+                                        <td>Cantidad</td>
+                                        <td>Total</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="4" class="text-end">Total General</th>
+                                    <th id="totalGeneral">0</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+
+    private int Quantity { get; set; }
+
+    private List<ServiciosDTO> ListaServicios = new List<ServiciosDTO>();
+    private ServiciosDTO selectedService = new ServiciosDTO();
+    private PacientesDTO pacienteDTO = new PacientesDTO();
+    private DetalleCitasDTO detalleCitasDTO = new DetalleCitasDTO();
+    private List<DetalleCitasDTO> Detalles = new List<DetalleCitasDTO>();
+    string priceService = "0.00";
+
+    public int cantidadServicios { get; set; }
+
+    private OrdenViewModel ordenVM = new OrdenViewModel();  // fallo
+    private bool isLoading = true; // Inicialmente en true
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (id.HasValue)
+            {
+                var res = await Http.GetAsync($"https://localhost:7268/api/Pacientes/{id}");
+                if(res.IsSuccessStatusCode)
+                {
+                    var leoDes = await res.Content.ReadAsAsync<PacientesDTO>();
+                    //ordenVM.Paciente = leoDes;
+                    pacienteDTO = leoDes;
+                }
+
+                //var medicos = await Http.GetFromJsonAsync<List<MedicosDTO>>("https://localhost:7268/api/Medicos");
+                //ordenVM.Medicos = medicos;
+
+                Console.WriteLine(id);
+
+                var response = await Http.GetAsync("https://localhost:7268/api/Servicios");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var leoDes = await response.Content.ReadAsAsync<List<ServiciosDTO>>();
+                    ListaServicios = leoDes;
+                    ordenVM.Servicios = (from p in leoDes select p).ToList();
+                }
+
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        finally
+        {
+            isLoading = false; // Termina la carga de datos
+        }
+    }
+
+    private void FirsDropChange(ChangeEventArgs e)
+    {
+        var selectedOpcion = e.Value.ToString();
+        if (!string.IsNullOrEmpty(selectedOpcion))
+        {
+            int selectedServiceId = int.Parse(selectedOpcion);
+
+            // Buscar el servicio en la lista
+            selectedService = ListaServicios.FirstOrDefault(l => l.ServicioId == selectedServiceId);
+
+            if (selectedService != null)
+            {
+                priceService = selectedService.Precio.ToString("F2");
+            }
+        }
+        else
+        {
+            priceService = "0.00";
+        }
+    }
+
+    private void AgregarDetalle()
+    {
+        // Validar cantidad y servicio seleccionado
+        if (Quantity <= 0 || selectedService.ServicioId == 0)
+        {
+            Console.WriteLine("Seleccione un producto y una cantidad valida.");
+            return;
+        }
+
+        var existingDetail = Detalles.FirstOrDefault(d => d.ServicioId == selectedService.ServicioId);
+        if(existingDetail != null)
+        {
+            // si ya existe, actualizar la cantidad y el total
+            Console.WriteLine("Falta la propiedad cantidad y total");
+        }
+        else
+        {
+
+            Detalles.Add(new DetalleCitasDTO()
+            {
+                ServicioId = selectedService.ServicioId,
+                CitaMedicaId = 0,
+            });
+        }
+    }
+
+}
