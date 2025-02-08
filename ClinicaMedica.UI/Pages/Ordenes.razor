@@ -1,0 +1,66 @@
+﻿@page "/Ordenes"
+@inject HttpClient Http
+@inject NavigationManager Nav
+@using ClinicaMedica.Model.DTOs.Basic
+@using ClinicaMedica.Model.DTOs.Create
+@using ClinicaMedica.Model.ViewModel
+
+<h3>Lista de Ordenes</h3>
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <td>Orden</td>
+                <td>Paciente</td>
+                <td>Medico</td>
+                <td>Acciones</td>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ListaOrdenes != null)
+            {
+                @foreach (var orden in ListaOrdenes)
+                {
+                    <tr>
+                        <td>@orden.CitaMedicaId</td>
+                        <td>@orden.Paciente.Persona.Nombre</td>
+                        <td>@orden.MedicoId</td>
+                        <td>
+                            <button class="btn btn-success"><i class="bi bi-pen-fill"></i></button>
+                            <button class="btn btn-danger"><i class="bi bi-trash3-fill"></i></button>
+                        </td>
+                    </tr>
+
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+
+@code {
+
+    private List<CitasMedicasDTO> ListaOrdenes = new List<CitasMedicasDTO>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await Http.GetAsync("https://localhost:7268/api/CitasMedicas");
+            if(response.IsSuccessStatusCode)
+            {
+                var leoDes = await response.Content.ReadAsAsync<List<CitasMedicasDTO>>();
+                ListaOrdenes = leoDes;
+            }
+        }
+        catch (Exception)
+        {
+            
+            throw;
+        }
+    }
+}
+

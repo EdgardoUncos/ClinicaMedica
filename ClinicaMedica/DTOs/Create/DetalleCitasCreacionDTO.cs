@@ -8,5 +8,8 @@ namespace ClinicaMedica.DTOs.Create
         public int CitaMedicaId { get; set; }
         [Required]
         public int ServicioId { get; set; }
+
+        [Required]
+        public int Cantidad { get; set; }
     }
 }

@@ -11,9 +11,11 @@ namespace ClinicaMedica.Utilities
         {
             CreateMap<Especialidades, EspecialidadesCreacionDTO>().ReverseMap();
             CreateMap<Especialidades, EspecialidadesDTO>().ReverseMap();
-            CreateMap<Medicos, MedicosDTO>().ReverseMap();
-            CreateMap<Personas, PersonasDTO>().ReverseMap();
+            CreateMap<Medicos, MedicosDTO>()
+            .ForMember(dest => dest.Persona, opt => opt.MapFrom(src => src.Persona))
+            .ReverseMap();
             CreateMap<Medicos, MedicosCreacionDTO>().ReverseMap();
+            CreateMap<Personas, PersonasDTO>().ReverseMap();
             CreateMap<Personas, PersonasCreacionDTO>().ReverseMap();
             CreateMap<Pacientes, PacientesCreacionDTO>().ReverseMap();
             CreateMap<Pacientes, PacientesDTO>().ReverseMap();

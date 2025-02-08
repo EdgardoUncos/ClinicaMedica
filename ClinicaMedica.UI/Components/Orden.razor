@@ -1,25 +1,13 @@
-﻿@page "/OrdenMedica/{id:int?}"
-@inject HttpClient Http
-@inject NavigationManager Nav
+﻿@inject HttpClient Http
+
 @using ClinicaMedica.Model.DTOs.Basic
 @using ClinicaMedica.Model.DTOs.Create
 @using ClinicaMedica.Model.ViewModel
-
-
 
 <div class="container">
     <div class="card">
         <div class="card-header">Orden Medica</div>
         <div class="card-body">
-            @if (isLoading)
-            {
-                <div class="text-center">
-                    <img src="~/ZKZg.gif" alt="Cargando..." width="50" height="50" />
-                    <p>Cargando datos...</p>
-                </div>
-            }
-            else
-            {
                 <div class="row">
                     <div class="col-sm-4">
                         <label class="form-label">Id Paciente</label>
@@ -35,31 +23,7 @@
                     </div>
                 </div>
                 <hr />
-                <div class="row align-items-end">
-                    <div class="col-sm-3">
-                        <label class="form-label">Servicio</label>
-                        <select class="form-select" @onchange=FirsDropChange>
-                            <option value="">Seleccionar servicio</option>
-                            @foreach (var item in OrdenVista.Servicios)
-                            {
-                                <option value="@item.ServicioId">@item.Nombre</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="form-label">Precio</label>
-                        <input class="form-control-sm" type="text" disabled @bind-value=priceService />
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="form-label">Cantidad</label>
-                        <input class="form-control-sm" type="number" @bind-value=Quantity />
-                    </div>
-                    <div class="col-sm-3">
-                        <button class="btn btn-success btn-sm" @onclick=AgregarDetalle>Agregar</button>
-                        <button class="btn btn-primary btn-sm" @onclick=CerrarOrden>Cerrar Orden</button>
-                    </div>
-                </div>
-                <hr />
+                
                 <div class="row">
                     <div class="col-sm-12">
                         <table class="table table-bordered table-sm">
@@ -93,49 +57,24 @@
                         </table>
                     </div>
                 </div>
-            }
         </div>
     </div>
 </div>
 
-
-
-
 @code {
-    [Parameter] public int? id { get; set; }
+    [Parameter]
+    public int id { get; set; }
+
+    public OrdenMVM OrdenVista { get; set; }
+
     private int Quantity { get; set; } = 1;
     private string priceService = "0.00";
     private ServiciosDTO selectedService;
     private bool isLoading = true;
-    private OrdenMVM OrdenVista = new();
 
     float totalGeneral;
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (id.HasValue)
-        {
-            var res = await Http.GetAsync($"https://localhost:7268/api/Pacientes/{id}");
-            if (res.IsSuccessStatusCode)
-                OrdenVista.Pacientes = await res.Content.ReadAsAsync<PacientesDTO>();
-
-            var response = await Http.GetAsync("https://localhost:7268/api/Servicios");
-            if (response.IsSuccessStatusCode)
-                OrdenVista.Servicios = await response.Content.ReadAsAsync<List<ServiciosDTO>>();
-
-            OrdenVista.Detalles = new List<DetallesVM>();
-        }
-        isLoading = false;
-    }
-
-    private void FirsDropChange(ChangeEventArgs e)
-    {
-        if (int.TryParse(e.Value?.ToString(), out int selectedServiceId))
-        {
-            selectedService = OrdenVista.Servicios.FirstOrDefault(s => s.ServicioId == selectedServiceId);
-            priceService = selectedService?.Precio.ToString("F2") ?? "0.00";
-        }
-    }
+    
 
     private void AgregarDetalle()
     {
@@ -179,19 +118,16 @@
                                          }).ToList();
 
             var response = await Http.PostAsJsonAsync("https://localhost:7268/api/CitasMedicas", newOrder);
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 Console.WriteLine("Orden Cerrada");
             }
-            
-            Nav.NavigateTo("/pacientes");
 
         }
         catch (Exception)
         {
-            
+
             throw;
         }
     }
 }
-
