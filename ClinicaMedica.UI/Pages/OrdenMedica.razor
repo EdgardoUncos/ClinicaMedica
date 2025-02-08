@@ -23,17 +23,17 @@
                 <div class="row">
                     <div class="col-sm-4">
                         <label class="form-label">Id Paciente</label>
-                        <input class="form-control-sm" type="text" @bind-value=pacienteDTO.PacienteId disabled="true" />
+                        <input class="form-control-sm" type="text" @bind-value=ordenVM.Paciente.PacienteId disabled="true" />
                     </div>
 
                     <div class="col-sm-4">
                         <label class="form-label">Nombre Paciente</label>
-                        <input class="form-control-sm" type="text" @bind-value=pacienteDTO.Persona.Nombre disabled="true" />
+                        <input class="form-control-sm" type="text" @bind-value=ordenVM.Paciente.Persona.Nombre disabled="true" />
                     </div>
 
                     <div class="col-sm-4">
                         <label class="form-label">Apellido</label>
-                        <input class="form-control-sm" type="text" @bind-value=pacienteDTO.Persona.Apellido disabled="true" />
+                        <input class="form-control-sm" type="text" @bind-value=ordenVM.Paciente.Persona.Apellido disabled="true" />
                     </div>
                 </div>
                 <hr />
@@ -45,7 +45,7 @@
                             <option value="">Seleccionar servicio </option>
                             @if (ListaServicios != null)
                             {
-                                @foreach (var item in ListaServicios)
+                                @foreach (var item in ordenVM.Servicios)
                                 {
                                         <option value="@item.ServicioId">@item.Nombre</option>
                                     }
@@ -129,6 +129,7 @@
     public int cantidadServicios { get; set; }
 
     private OrdenViewModel ordenVM = new OrdenViewModel();  // fallo
+
     private bool isLoading = true; // Inicialmente en true
 
     protected override async Task OnInitializedAsync()
@@ -141,7 +142,7 @@
                 if(res.IsSuccessStatusCode)
                 {
                     var leoDes = await res.Content.ReadAsAsync<PacientesDTO>();
-                    //ordenVM.Paciente = leoDes;
+                    ordenVM.Paciente = leoDes;
                     pacienteDTO = leoDes;
                 }
 

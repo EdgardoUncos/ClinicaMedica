@@ -76,6 +76,9 @@ namespace ClinicaMedica.Data
             modelBuilder.Entity<DetalleCitas>()
             .HasKey(e => new { e.CitaMedicaId, e.ServicioId });
 
+            modelBuilder.Entity<DetalleCitas>().Property(dc => dc.Cantidad)
+                 .IsRequired()
+                 .HasDefaultValue(1);
             // Relación entre DetalleCitas y CitasMedicas
             modelBuilder.Entity<DetalleCitas>()
                 .HasOne(d => d.CitaMedica) // Propiedad de navegación
