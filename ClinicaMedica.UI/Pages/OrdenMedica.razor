@@ -175,8 +175,9 @@
                                          {
                                              CitaMedicaId = 0,
                                              ServicioId = d.ServicioId,
-                                             // falta cantidad
+                                             Cantidad = d.Cantidad
                                          }).ToList();
+            newOrder.Total = totalGeneral;
 
             var response = await Http.PostAsJsonAsync("https://localhost:7268/api/CitasMedicas", newOrder);
             if(response.IsSuccessStatusCode)

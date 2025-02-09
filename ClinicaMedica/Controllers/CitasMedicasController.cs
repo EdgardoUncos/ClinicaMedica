@@ -30,10 +30,11 @@ namespace ClinicaMedica.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CitasMedicasDTO>>> GetCitasMedicas()
         {
-          if (_context.CitasMedicas == null)
-          {
-              return NotFound();
-          }
+            if (_context.CitasMedicas == null)
+            {
+                return NotFound();
+            }
+
             var citasMedicas = await _context.CitasMedicas
                 .Include(c => c.Paciente)
                 .Include(c => c.Medico.Persona)
@@ -41,6 +42,7 @@ namespace ClinicaMedica.Controllers
                 .Include(c => c.Paciente.Persona)
                 .Include(c => c.DetalleCitas).ToListAsync();
 
+            // Mapeo Propio -- AUtomapper no esta mapeanod a Medicos
             var listaCitaMedicaDTO = (from c in citasMedicas
                                      select new CitasMedicasDTO()
                                      {

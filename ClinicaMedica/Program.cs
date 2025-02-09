@@ -70,7 +70,7 @@ try
 
         c.SwaggerDoc("v1", new OpenApiInfo
         {
-            Title = "Cuentas Individuales",
+            Title = "Clinica Medica",
             Version = "v1"
         });
         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
