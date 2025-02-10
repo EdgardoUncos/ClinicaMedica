@@ -1,7 +1,8 @@
-﻿@page "/servicos"
+﻿@page "/servicios"
 @using ClinicaMedica.Model.DTOs.Basic
 @using ClinicaMedica.UI.Components
 @inject HttpClient Http
+@inject NavigationManager Nav
 
 
 <h2>Servicios</h2>
@@ -26,7 +27,7 @@
                         <td>@servicio.Nombre</td>
                         <td>@servicio.Descripcion</td>
                         <td>
-                            <button class="btn btn-success"><i class="bi bi-pen-fill"></i></button>
+                            <button class="btn btn-success"  @onclick="(()=>NavigateToDetails(servicio.ServicioId))"><i class="bi bi-pen-fill"></i></button>
                             <button class="btn btn-danger"><i class="bi bi-trash3-fill"></i></button>
                         </td>
                     </tr>
@@ -54,6 +55,11 @@
             ListaServicios = leoDes;
             ordenVM.Servicios = (from p in leoDes select p).ToList();
         }
+    }
+
+    private void NavigateToDetails(int id)
+    {
+        Nav.NavigateTo($"/serviciodetail/{id}");
     }
 
     

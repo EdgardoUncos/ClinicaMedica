@@ -49,7 +49,7 @@ namespace ClinicaMedica.Controllers
                                          CitaMedicaId = c.CitaMedicaId,
                                          Paciente = _mapper.Map<PacientesDTO>(c.Paciente),
                                          MedicoId = c.MedicoId,
-                                         Medicos = _mapper.Map<MedicosDTO>(c.Medico),
+                                         Medico = _mapper.Map<MedicosDTO>(c.Medico),
                                          DetalleCitas = _mapper.Map<List<DetalleCitasDTO>>(c.DetalleCitas),
                                      }).ToList();
           
@@ -58,20 +58,28 @@ namespace ClinicaMedica.Controllers
 
         // GET: api/CitasMedicas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CitasMedicas>> GetCitasMedicas(int id)
+        public async Task<ActionResult<CitasMedicasDTO>> GetCitasMedicas(int id)
         {
           if (_context.CitasMedicas == null)
           {
               return NotFound();
           }
-            var citasMedicas = await _context.CitasMedicas.FindAsync(id);
+            var citasMedicas = await _context.CitasMedicas.Include(cm => cm.Paciente)
+                .Include(cm => cm.Paciente.Persona)
+                .Include(cm => cm.Paciente.Persona)
+                .Include(cm => cm.Medico)
+                .Include(cm => cm.Medico.Persona)
+                .Include(cm => cm.DetalleCitas)
+                .FirstOrDefaultAsync(cm => cm.CitaMedicaId == id);
 
             if (citasMedicas == null)
             {
                 return NotFound();
             }
 
-            return citasMedicas;
+            var citasMedicasDTO = _mapper.Map<CitasMedicasDTO>(citasMedicas);
+
+            return citasMedicasDTO;
         }
 
         // PUT: api/CitasMedicas/5

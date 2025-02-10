@@ -1,0 +1,60 @@
+﻿@page "/serviciodetail/{id:int}"
+@using ClinicaMedica.Model.DTOs.Basic
+@inject HttpClient Http
+
+<div>
+    <h4>ServiciosDTO</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+           ServicioId
+        </dt>
+        <dd class="col-sm-10">
+            <input type="text" @bind-value=model.ServicioId disabled="true" />
+        </dd>
+        <dt class="col-sm-2">
+            Nombre
+        </dt>
+        <dd class="col-sm-10">
+            <input type="text" @bind-value=model.Nombre disabled="true" />
+        </dd>
+        <dt class="col-sm-2">
+            Descripcion
+        </dt>
+        <dd class="col-sm-10">
+            <input type="text" @bind-value=model.Descripcion disabled="true" />
+        </dd>
+        <dt class="col-sm-2">
+            Precio
+        </dt>
+        <dd class="col-sm-10">
+            <input type="text" @bind-value=model.Precio disabled="true" />
+        </dd>
+    </dl>
+</div>
+
+@code {
+
+    [Parameter] public int id { get; set; }
+    private ServiciosDTO model = new ServiciosDTO();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await Http.GetAsync($"https://localhost:7268/api/Servicios/{id}");
+            if(response.IsSuccessStatusCode)
+            {
+                var leoDes = await response.Content.ReadAsAsync<ServiciosDTO>();
+                model = leoDes;
+            }
+        }
+        catch (Exception ex)
+        {
+
+            Console.WriteLine(ex.Message);
+        }
+        
+    }
+
+}

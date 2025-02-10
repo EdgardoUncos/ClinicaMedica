@@ -1,0 +1,130 @@
+﻿@page "/ordendetail/{id:int}"
+@using ClinicaMedica.Model.DTOs.Basic
+@using ClinicaMedica.UI.Components
+@inject HttpClient Http
+
+
+@if (citasMedicasDTO?.Medico?.Persona != null)
+{
+    <h4>@citasMedicasDTO.Medico.Persona.Nombre</h4>
+}
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">Orden Medica</div>
+        <div class="card-body">
+            @if (OrdenVista.Pacientes != null)
+            {
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label class="form-label">Id Paciente</label>
+                        <input class="form-control-sm" type="text" @bind-value=OrdenVista.Pacientes.PacienteId disabled />
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label">Nombre Paciente</label>
+                        <input class="form-control-sm" type="text" @bind-value=OrdenVista.Pacientes.Persona.Nombre disabled />
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label">Apellido</label>
+                        <input class="form-control-sm" type="text" @bind-value=OrdenVista.Pacientes.Persona.Apellido disabled />
+                    </div>
+                </div>
+                <hr />
+
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr class="table-dark">
+                                    <th>Código</th>
+                                    <th>Servicio</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in OrdenVista.Detalles)
+                                {
+                                    <tr>
+                                        <td>@item.ServicioId</td>
+                                        <td>@item?.NombreServicio</td>
+                                        <td>@item.Precio</td>
+                                        <td>@item.Cantidad</td>
+                                        <td>@item.Total</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="4" class="text-end">Total General</th>
+                                    <th>@totalGeneral.ToString("C", new System.Globalization.CultureInfo("es-AR"))</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            }
+            
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    [Parameter] public int id { get; set; }
+    private CitasMedicasDTO citasMedicasDTO = new CitasMedicasDTO();
+    private List<ServiciosDTO> servicios = new List<ServiciosDTO>();
+    private OrdenMVM OrdenVista = new OrdenMVM();
+    private float totalGeneral;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Obtener los servicios
+            var ressev = await Http.GetAsync("https://localhost:7268/api/Servicios");
+            if (ressev.IsSuccessStatusCode)
+            {
+                servicios = await ressev.Content.ReadFromJsonAsync<List<ServiciosDTO>>();
+            }
+
+            // Obtener la cita médica
+            var response = await Http.GetAsync($"https://localhost:7268/api/CitasMedicas/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                citasMedicasDTO = await response.Content.ReadFromJsonAsync<CitasMedicasDTO>();
+
+                OrdenVista.Pacientes = citasMedicasDTO.Paciente;
+
+                // Verifica que haya servicios antes de hacer LINQ
+                if (servicios != null)
+                {
+                    OrdenVista.Detalles = citasMedicasDTO.DetalleCitas
+                        .Select(d => new DetallesVM()
+                            {
+                                ServicioId = d.ServicioId,
+                                NombreServicio = servicios.FirstOrDefault(s => s.ServicioId == d.ServicioId)?.Nombre ?? "Desconocido",
+                                Cantidad = d.Cantidad,
+                                Precio = servicios.FirstOrDefault(s => s.ServicioId == d.ServicioId)?.Precio ?? 0,
+                                Total = d.Cantidad * (servicios.FirstOrDefault(s => s.ServicioId == d.ServicioId)?.Precio ?? 0)
+                            }).ToList();
+
+                    totalGeneral = OrdenVista.Detalles.Sum(s => s.Total);
+                }
+                else
+                {
+                    Console.WriteLine("Error: No se pudo cargar la lista de servicios.");
+                }
+
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}
